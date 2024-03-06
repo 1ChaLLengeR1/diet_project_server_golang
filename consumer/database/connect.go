@@ -1,4 +1,4 @@
-package database
+package consumer_database
 
 import (
 	"database/sql"

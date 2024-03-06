@@ -1,4 +1,4 @@
-package initializers
+package consumer_initializers
 
 import (
 	"log"

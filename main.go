@@ -1,8 +1,8 @@
 package main
 
 import (
-	"internal/database"
-	"internal/initializers"
+	database "internal/consumer/database"
+	initializers "internal/consumer/initializers"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
