@@ -1,14 +1,15 @@
 package consumer_initializers
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/joho/godotenv"
 )
 
-func LoadEnv() {
-	err := godotenv.Load()
+func LoadEnv(path string) error{
+	err := godotenv.Load(path)
 	if err != nil{
-		log.Fatal("Error loading .env file: ", err)
+		return fmt.Errorf("not load file env: %v", err)
 	}
+	return nil
 }

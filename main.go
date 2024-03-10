@@ -3,6 +3,7 @@ package main
 import (
 	database "internal/consumer/database"
 	initializers "internal/consumer/initializers"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -34,8 +35,15 @@ func FetchCollection(context *gin.Context){
 
 
 func init(){
-	initializers.LoadEnv()
-	database.ConnectToDataBase()
+	err := initializers.LoadEnv(".env")
+	if err != nil{
+		log.Fatal(err)
+	}
+
+	err = database.ConnectToDataBase()
+	if err != nil{
+		log.Fatal(err)
+	}
 }
 
 
