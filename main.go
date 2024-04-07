@@ -1,40 +1,18 @@
 package main
 
 import (
+	"context"
+	"fmt"
+	application "internal/consumer/application"
 	database "internal/consumer/database"
 	initializers "internal/consumer/initializers"
 	"log"
-	"net/http"
 
-	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 )
 
-type Collection struct {
-	Data []OneResult `json:"data"`
-}
+func main(){
 
-type OneResult struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
-	Age  string `json:"age"`
-}
-
-
-var collection = Collection{
-	Data: []OneResult{
-		{Id:"1", Name: "artek", Age: "24"},
-		{Id:"2", Name: "maks", Age: "24"},
-	},
-}
-
-
-func FetchCollection(context *gin.Context){
-	context.IndentedJSON(http.StatusOK, collection)
-}
-
-
-func init(){
 	err := initializers.LoadEnv(".env")
 	if err != nil{
 		log.Fatal(err)
@@ -44,13 +22,12 @@ func init(){
 	if err != nil{
 		log.Fatal(err)
 	}
-}
 
 
-func main(){
-
-	router := gin.Default()
-	router.GET("/collection", FetchCollection)
-	router.Run("localhost:8080")
-
+	app := application.New()
+	err = app.Start(context.TODO())
+	if err !=nil{
+		fmt.Println("failed to start app:", err)
+	}
+	
 }

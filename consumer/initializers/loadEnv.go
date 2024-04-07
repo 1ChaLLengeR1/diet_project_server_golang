@@ -11,5 +11,6 @@ func LoadEnv(path string) error{
 	if err != nil{
 		return fmt.Errorf("not load file env: %v", err)
 	}
+	fmt.Println("Successfully loadEnv!")
 	return nil
 }
