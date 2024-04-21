@@ -1,0 +1,18 @@
+user: id, userName, lastName, email, role
+post: id, projectId,  userId, day, weight, fitatu, createdUp, UpdateUp
+traning: id, userId, type, time, kcal, createdUp, UpdateUp
+images: id, userId, postId, path, url, createdUp, UpdateUp
+project: id, userId, title, description, url, path, createdUp, updateUp
+
+
+auth0
+L: artek.scibor@gmail.com
+H: auth0@zaq1@WSXartek123
+
+appleId
+ArtekApple12345@
+
+
+
+
+
