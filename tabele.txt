@@ -5,12 +5,7 @@ images: id, userId, postId, path, url, createdUp, UpdateUp
 project: id, userId, title, description, url, path, createdUp, updateUp
 
 
-auth0
-L: artek.scibor@gmail.com
-H: auth0@zaq1@WSXartek123
 
-appleId
-ArtekApple12345@
 
 
 
