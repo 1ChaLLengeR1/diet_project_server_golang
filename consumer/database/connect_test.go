@@ -8,8 +8,9 @@ import (
 func TestConnectToDataBase(t *testing.T) {
 
 	env.LoadEnv("./../../.env")
-	err := ConnectToDataBase()
+	db, err := ConnectToDataBase()
 	if err != nil {
 		t.Errorf("not connect do database: %s", err.Error())
 	}
+	defer db.Close()
 }

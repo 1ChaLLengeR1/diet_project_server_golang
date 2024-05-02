@@ -8,3 +8,8 @@ type User struct {
 	Email    string `json:"email"`
 	Role     string `json:"role"`
 }
+
+type UserData struct {
+	Nickname string `json:"nickName"`
+	Name     string `json:"name"`
+}

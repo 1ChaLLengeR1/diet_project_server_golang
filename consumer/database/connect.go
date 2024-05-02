@@ -9,7 +9,7 @@ import (
 )
 
 
-func ConnectToDataBase() error{
+func ConnectToDataBase() (*sql.DB, error){
 
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
@@ -20,15 +20,16 @@ func ConnectToDataBase() error{
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		return fmt.Errorf("not found a database: %v", err)
+		return nil, fmt.Errorf("not found a database: %v", err)
 	}
-	defer db.Close()
+	
 
 	err = db.Ping()
 	if err != nil {
-		return fmt.Errorf("not pinnging the database: %v", err)
+		db.Close()
+		return nil, fmt.Errorf("not pinnging the database: %v", err)
 	}
 
 	fmt.Println("Successfully connected to the database!")
-	return nil
+	return db, nil
 }
