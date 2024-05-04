@@ -1,23 +1,32 @@
 package main
 
 import (
-	"internal/database"
-	"internal/initializers"
+	"context"
+	"fmt"
+	application "internal/consumer/application"
+	database "internal/consumer/database"
+	initializers "internal/consumer/initializers"
+	"log"
 
-	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 )
-
-
-
-
-func init(){
-	initializers.LoadEnv()
-	database.ConnectToDataBase()
-}
-
 
 func main(){
 
-	router := gin.Default()
-	router.Run("localhost:8080")
+	err := initializers.LoadEnv(".env")
+	if err != nil{
+		log.Fatal(err)
+	}
+
+	_,err = database.ConnectToDataBase()
+	if err != nil{
+		log.Fatal(err)
+	}
+
+	app := application.New()
+	err = app.Start(context.TODO())
+	if err !=nil{
+		fmt.Println("failed to start sever app:", err)
+	}
+
 }

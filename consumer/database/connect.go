@@ -1,14 +1,15 @@
-package database
+package consumer_database
 
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
+
+	_ "github.com/lib/pq"
 )
 
 
-func ConnectToDataBase() {
+func ConnectToDataBase() (*sql.DB, error){
 
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
@@ -19,16 +20,16 @@ func ConnectToDataBase() {
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		log.Fatal("Error to connect  in the Database: ", err)
-		panic(err)
+		return nil, fmt.Errorf("not found a database: %v", err)
 	}
-	defer db.Close()
+	
 
 	err = db.Ping()
 	if err != nil {
-		log.Fatal("Error to pinging in the Database: ", err)
-		panic(err)
+		db.Close()
+		return nil, fmt.Errorf("not pinnging the database: %v", err)
 	}
 
-	fmt.Println("Successfully connected!")
+	fmt.Println("Successfully connected to the database!")
+	return db, nil
 }
