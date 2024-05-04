@@ -18,7 +18,7 @@ func (p *Auth) Authorization(c *gin.Context) {
 	userData := c.GetHeader("UserData")
 	var usersData []user_data.User
 	
-	value, users,  err := checkUser(userData)
+	value, users,  err := CheckUser(userData)
 	if err !=nil{
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -29,7 +29,11 @@ func (p *Auth) Authorization(c *gin.Context) {
 	if value{
 		value, err := createUser(userData)
 		if err != nil{
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{
+				"collection": nil,
+				"status": http.StatusBadRequest,
+				"error":err,
+			})
 			return
 		}
 		usersData = value
@@ -41,7 +45,7 @@ func (p *Auth) Authorization(c *gin.Context) {
 	})
 }
 
-func checkUser(userData string)(bool, []user_data.User, error){
+func CheckUser(userData string)(bool, []user_data.User, error){
 	var data user_data.UserData
 	var user user_data.User
 	var users []user_data.User
@@ -56,7 +60,7 @@ func checkUser(userData string)(bool, []user_data.User, error){
 		return false, nil, fmt.Errorf("error josn userData: %v", err)
 	}
 
-	query := `SELECT * FROM users WHERE "email" = $1 AND "nickName" = $2`
+	query := `SELECT * FROM users WHERE "email" = $1 AND "nickName" = $2;`
 	row := db.QueryRow(query, data.Name, data.Nickname)
 	err = row.Scan(&user.Id, &user.UserName, &user.LastName, &user.NickName, &user.Email, &user.Role)
 	users = append(users, user)

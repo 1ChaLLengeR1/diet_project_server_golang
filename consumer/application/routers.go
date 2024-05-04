@@ -3,6 +3,7 @@ package application
 import (
 	"internal/consumer/handler"
 	auth_handler "internal/consumer/handler/auth"
+	user_handler "internal/consumer/handler/user"
 	"internal/consumer/middleware"
 	"net/http"
 
@@ -36,6 +37,13 @@ func loadRouters() *gin.Engine {
 	authGroup := router.Group("/api/auth", middleware.EnsureValidToken())
 	{
 		authGroup.POST("/authorization", authHander.Authorization)
+	}
+
+	//user
+	userHandler :=  &user_handler.User{}
+	userGroup := router.Group("/api/user", middleware.EnsureValidToken())
+	{
+		userGroup.PATCH("/change", userHandler.ChangeUser)
 	}
 
 
