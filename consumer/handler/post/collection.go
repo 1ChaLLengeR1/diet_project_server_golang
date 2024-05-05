@@ -6,12 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Collection struct{}
 
-func (p *Collection) Collection(c *gin.Context) {
+func Collection(c *gin.Context) {
 	fmt.Println("Collection Post")
 }
 
-func (p *Collection) GetById(c *gin.Context) {
+func GetById(c *gin.Context) {
 	fmt.Println("Get Post by Id")
 }

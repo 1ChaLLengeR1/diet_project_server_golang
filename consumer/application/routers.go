@@ -1,8 +1,8 @@
 package application
 
 import (
-	"internal/consumer/handler"
 	auth_handler "internal/consumer/handler/auth"
+	post_handler "internal/consumer/handler/post"
 	user_handler "internal/consumer/handler/user"
 	"internal/consumer/middleware"
 	"net/http"
@@ -22,14 +22,13 @@ func loadRouters() *gin.Engine {
 	
 	
 	//post routers
-	postHandler := &handler.Post{}
-	postGroup := router.Group("/post")
+	postGroup := router.Group("api/post")
 	{
-		postGroup.POST("/", postHandler.Create)
-		postGroup.GET("/", postHandler.Collection)
-		postGroup.GET("/:id", postHandler.GetById)
-		postGroup.PATCH("/:id", postHandler.UpdateById)
-		postGroup.DELETE("/:id", postHandler.DeleteById)
+		postGroup.POST("/create", post_handler.Create)
+		postGroup.GET("/collection", post_handler.Collection)
+		postGroup.GET("/getById/:id", post_handler.GetById)
+		postGroup.PATCH("/change/:id", post_handler.Change)
+		postGroup.DELETE("/delete/:id", post_handler.Delete)
 	}
 
 	// auth jwt

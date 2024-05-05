@@ -6,9 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Create struct{}
 
-func (p *Create) Create(c *gin.Context) {
+
+func Create(c *gin.Context) {
 	fmt.Println("Create Post")
-
 }
