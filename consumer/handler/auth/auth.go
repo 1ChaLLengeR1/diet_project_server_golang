@@ -13,18 +13,17 @@ import (
 
 type Auth struct{}
 
-
 func (p *Auth) Authorization(c *gin.Context) {
 	userData := c.GetHeader("UserData")
 	var usersData []user_data.User
-	
+
 	value, users,  err := CheckUser(userData)
 	if err !=nil{
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	
-	usersData = users
+	usersData = users 
 
 	if value{
 		value, err := createUser(userData)
@@ -60,9 +59,9 @@ func CheckUser(userData string)(bool, []user_data.User, error){
 		return false, nil, fmt.Errorf("error josn userData: %v", err)
 	}
 
-	query := `SELECT * FROM users WHERE "email" = $1 AND "nickName" = $2;`
-	row := db.QueryRow(query, data.Name, data.Nickname)
-	err = row.Scan(&user.Id, &user.UserName, &user.LastName, &user.NickName, &user.Email, &user.Role)
+	query := `SELECT * FROM users WHERE "sub" = $1;`
+	row := db.QueryRow(query, data.Sub)
+	err = row.Scan(&user.Id, &user.UserName, &user.LastName, &user.NickName, &user.Email, &user.Role, &user.Sub)
 	users = append(users, user)
 	defer db.Close()
 
@@ -91,9 +90,9 @@ func createUser(userData string) ([]user_data.User, error){
 	}
 
 	var users []user_data.User
-	query := `INSERT INTO users ("userName", "lastName", "nickName", "email", "role") VALUES ($1, $2, $3, $4, $5) RETURNING "id", "userName", "lastName", "nickName", "email", "role";`
+	query := `INSERT INTO users ("userName", "lastName", "nickName", "email", "role", "sub") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id", "userName", "lastName", "nickName", "email", "role", "sub";`
 
-	rows, err := db.Query(query, "", "", data.Nickname, data.Name, "user")
+	rows, err := db.Query(query, "", "", data.Nickname, data.Name, "user", data.Sub)
 	if err != nil {
 		return nil, fmt.Errorf("error db.query: %v", err)
 	}
@@ -101,7 +100,7 @@ func createUser(userData string) ([]user_data.User, error){
 
 	for rows.Next() {
 		var user user_data.User
-		if err := rows.Scan(&user.Id, &user.UserName, &user.LastName, &user.NickName, &user.Email, &user.Role); err != nil {
+		if err := rows.Scan(&user.Id, &user.UserName, &user.LastName, &user.NickName, &user.Email, &user.Role, &user.Sub); err != nil {
 			return nil, fmt.Errorf("error scanning user row: %v", err)
 		}
 		users = append(users, user)
