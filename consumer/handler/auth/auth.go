@@ -62,6 +62,9 @@ func CheckUser(userData string)(bool, []user_data.User, error){
 	query := `SELECT * FROM users WHERE "sub" = $1;`
 	row := db.QueryRow(query, data.Sub)
 	err = row.Scan(&user.Id, &user.UserName, &user.LastName, &user.NickName, &user.Email, &user.Role, &user.Sub)
+	if err != nil {
+		return false, nil, fmt.Errorf("error scanning row: %v", err)
+	}
 	users = append(users, user)
 	defer db.Close()
 

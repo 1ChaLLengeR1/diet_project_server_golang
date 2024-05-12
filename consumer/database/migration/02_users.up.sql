@@ -5,5 +5,6 @@ CREATE TABLE IF NOT EXISTS public.users (
     "nickName" VARCHAR COLLATE pg_catalog."default",
     email VARCHAR COLLATE pg_catalog."default",
     role VARCHAR COLLATE pg_catalog."default",
+    sub VARCHAR COLLATE pg_catalog."default",
     CONSTRAINT users_pkey PRIMARY KEY (id)
 );
