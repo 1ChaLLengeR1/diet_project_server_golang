@@ -28,7 +28,7 @@ func loadRouters() *gin.Engine {
 		// postGroup.GET("/collection", post_handler.)
 		// postGroup.GET("/getById/:id", post_handler.GetById)
 		// postGroup.PATCH("/change/:id", post_handler.Change)
-		// postGroup.DELETE("/delete/:id", post_handler.Delete)
+		postGroup.DELETE("/delete/:id", post_handler.HandlerDelete)
 	}
 
 	// auth jwt
