@@ -19,7 +19,7 @@ type ResponseChange struct{
 }
 
 func HandlerChange(c *gin.Context){
-	err, change := change(c)
+	change, err := change(c)
 	if err != nil{
 		c.JSON(http.StatusOK, ResponseChange{
 			Collection: nil,
@@ -36,7 +36,7 @@ func HandlerChange(c *gin.Context){
 	})
 }
 
-func change(c* gin.Context)(error, ResponseChange){
+func change(c* gin.Context)(ResponseChange, error){
 	userData := c.GetHeader("UserData")
 	var usersData []user_data.User
 	var changesData []change_data.Change
@@ -44,18 +44,18 @@ func change(c* gin.Context)(error, ResponseChange){
 
 	db, err := database.ConnectToDataBase()
 	if err != nil{
-		return err, ResponseChange{}
+		return ResponseChange{}, err
 	}
 
 	_, users,  err := auth.CheckUser(userData)
 	if err != nil{
-		return err, ResponseChange{}
+		return ResponseChange{}, err
 	}
 
 	var changePost change_data.Change
 	err = c.BindJSON(&changePost)
 	if err != nil{
-		return err, ResponseChange{}
+		return ResponseChange{}, err
 	}
 
 	usersData = users
@@ -81,7 +81,7 @@ func change(c* gin.Context)(error, ResponseChange){
 
 	if len(updateFields) == 0 {
 		if err != nil {
-			return err, ResponseChange{}
+			return ResponseChange{}, err
 		}
 	}
 
@@ -90,21 +90,21 @@ func change(c* gin.Context)(error, ResponseChange){
 	query := `UPDATE post SET` +  strings.Join(updateFields, ", ") + ` WHERE "id" = $1 AND "userId" = $2 RETURNING "id", "userId", "day", "weight", "kcal", "createdUp", "updateUp", "description";`
 	rows, err := db.Query(query, &id, &usersData[0].Id)
 	if err != nil {
-		return err, ResponseChange{}
+		return ResponseChange{}, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var change change_data.Change
 		if err := rows.Scan(&change.Id, &change.UserId, &change.Day, &change.Weight, &change.Kcal, &change.CreatedUp, &change.UpdateUp, &change.Description); err != nil {
-			return err, ResponseChange{}
+			return ResponseChange{}, err
 		}
 		changesData = append(changesData, change)
 	}
 
-	return nil, ResponseChange{
+	return ResponseChange{
 		Collection: changesData,
 		Status: http.StatusOK,
 		Error: "",
-	}
+	}, nil
 }

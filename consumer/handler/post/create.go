@@ -19,7 +19,7 @@ type ResponseCreate struct {
 
 func CreateHandler(c * gin.Context){
 
-	err, craete := create(c)
+	craete, err := create(c)
 	if err != nil{
 		c.JSON(http.StatusOK, ResponseCreate{
 			Collection: nil,
@@ -37,7 +37,7 @@ func CreateHandler(c * gin.Context){
 }
 
 
-func create(c *gin.Context) (error, ResponseCreate){
+func create(c *gin.Context) (ResponseCreate, error){
 	userData := c.GetHeader("UserData")
 	var usersData []user_data.User
 	var postsData []post_data.Post
@@ -45,12 +45,12 @@ func create(c *gin.Context) (error, ResponseCreate){
 
 	db, err := database.ConnectToDataBase()
 	if err != nil{
-		return err, ResponseCreate{}
+		return ResponseCreate{}, err
 	}
 
 	_, users,  err := auth.CheckUser(userData)
 	if err != nil{
-		return err, ResponseCreate{}
+		return ResponseCreate{}, err
 	}
 
 	usersData = users
@@ -59,7 +59,7 @@ func create(c *gin.Context) (error, ResponseCreate){
 	var createPost post_data.Post
 	err = c.BindJSON(&createPost)
 	if err != nil{
-		return err, ResponseCreate{}
+		return ResponseCreate{}, err
 	}
 
 
@@ -68,21 +68,21 @@ func create(c *gin.Context) (error, ResponseCreate){
 
 	rows, err := db.Query(query, usersData[0].Id, createPost.Day, createPost.Weight, createPost.Kcal, createPost.CreatedUp, createPost.UpdateUp, createPost.Description)
 	if err != nil {
-		return err, ResponseCreate{}
+		return ResponseCreate{}, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var post post_data.Post
 		if err := rows.Scan(&post.Id, &post.UserId, &post.Day, &post.Weight, &post.Kcal, &post.CreatedUp, &post.UpdateUp, &post.Description); err != nil {
-			return err, ResponseCreate{}
+			return ResponseCreate{}, err
 		}
 		postsData = append(postsData, post)
 	}
 
-	return nil, ResponseCreate{
+	return ResponseCreate{
 		Collection: postsData,
 		Status: http.StatusOK,
 		Error: "",
-	}
+	}, nil
 }
