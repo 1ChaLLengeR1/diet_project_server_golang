@@ -2,6 +2,7 @@ package helper
 
 import (
 	"database/sql"
+	"fmt"
 	"math"
 )
 
@@ -15,12 +16,12 @@ type PaginationCollectionPost struct {
 	Offset 		int
 }
 
-func GetPaginationData(db *sql.DB, page int, perPage int ) PaginationCollectionPost {
+func GetPaginationData(db *sql.DB, tableName string, page int, perPage int ) PaginationCollectionPost {
 
 
 	var totalRows int
 
-	queryCount := `SELECT COUNT(*) FROM post;`
+	queryCount := fmt.Sprintf("SELECT COUNT(*) FROM %s;", tableName)
 	err := db.QueryRow(queryCount).Scan(&totalRows)
 	if err != nil {
 		return PaginationCollectionPost{}

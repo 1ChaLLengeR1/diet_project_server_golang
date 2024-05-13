@@ -26,6 +26,7 @@ func loadRouters() *gin.Engine {
 	{
 		postGroup.POST("/create", post_handler.CreateHandler)
 		postGroup.GET("/collection/:page", post_handler.HandlerCollection)
+		postGroup.GET("/one/:id", post_handler.HandlerCollectionOne)
 		// postGroup.GET("/getById/:id", post_handler.GetById)
 		postGroup.PATCH("/change/:id", post_handler.HandlerChange)
 		postGroup.DELETE("/delete/:id", post_handler.HandlerDelete)

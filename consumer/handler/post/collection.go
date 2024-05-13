@@ -61,15 +61,15 @@ func collection(c* gin.Context)(ResponseCollection, error){
 	}
 
 	usersData = users
-	
+
 	pageStr := c.Param("page")
 	if pageStr != ""{
 		page, _ = strconv.Atoi(pageStr)
 	}
 
-	pagination := helpers.GetPaginationData(db, page, perPage)
+	pagination := helpers.GetPaginationData(db, "post", page, perPage)
 
-	query := `SELECT * FROM post WHERE "userId" = $3 ORDER BY "updateUp" DESC LIMIT $1 OFFSET $2;`
+	query := `SELECT * FROM post WHERE "userId" = $3 ORDER BY "day" DESC LIMIT $1 OFFSET $2;`
 	rows, err := db.Query(query, &perPage, pagination.Offset, &usersData[0].Id)
 	if err != nil {
 		return ResponseCollection{}, err
