@@ -52,13 +52,15 @@ func change(c* gin.Context)(ResponseChange, error){
 		return ResponseChange{}, err
 	}
 
+	usersData = users
+
 	var changePost change_data.Change
 	err = c.BindJSON(&changePost)
 	if err != nil{
 		return ResponseChange{}, err
 	}
 
-	usersData = users
+	
 	id := c.Param("id")
 
 
