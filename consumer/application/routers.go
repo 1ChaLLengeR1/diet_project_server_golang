@@ -24,12 +24,11 @@ func loadRouters() *gin.Engine {
 	//post routers
 	postGroup := router.Group("api/post")
 	{
-		postGroup.POST("/create", post_handler.CreateHandler)
-		postGroup.GET("/collection/:page", post_handler.HandlerCollection)
+		postGroup.POST("/create", post_handler.CreateHandler, middleware.EnsureValidToken())
+		postGroup.GET("/collection/:page", post_handler.HandlerCollection, middleware.EnsureValidToken())
 		postGroup.GET("/one/:id", post_handler.HandlerCollectionOne)
-		// postGroup.GET("/getById/:id", post_handler.GetById)
-		postGroup.PATCH("/change/:id", post_handler.HandlerChange)
-		postGroup.DELETE("/delete/:id", post_handler.HandlerDelete)
+		postGroup.PATCH("/change/:id", post_handler.HandlerChange, middleware.EnsureValidToken())
+		postGroup.DELETE("/delete/:id", post_handler.HandlerDelete, middleware.EnsureValidToken())
 	}
 
 	// auth jwt
