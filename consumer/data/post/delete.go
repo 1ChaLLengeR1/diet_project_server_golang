@@ -6,7 +6,7 @@ type Delete struct {
 	Day         int64   `json:"day"`
 	Weight      float64 `json:"weight"`
 	Kcal        int64   `json:"kcal"`
-	CreatedUp   *string `json:"createdUp"`
-	UpdateUp    *string `json:"updateUp"`
-	Description *string `json:"description"`
+	CreatedUp   string  `json:"createdUp"`
+	UpdateUp    string  `json:"updateUp"`
+	Description string  `json:"description"`
 }

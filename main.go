@@ -18,7 +18,7 @@ func main(){
 		log.Fatal(err)
 	}
 
-	_,err = database.ConnectToDataBase()
+	_ ,err = database.ConnectToDataBase()
 	if err != nil{
 		log.Fatal(err)
 	}
