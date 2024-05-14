@@ -1,10 +1,12 @@
 package post
 
 import (
+	params_data "internal/consumer/data"
 	post_data "internal/consumer/data/post"
 	user_data "internal/consumer/data/user"
 	database "internal/consumer/database"
 	"internal/consumer/handler/auth"
+	helpers "internal/consumer/helper"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,9 +21,26 @@ type ResponseCreate struct {
 
 func CreateHandler(c * gin.Context){
 
-	craete, err := create(c)
+	var createPost post_data.Post
+	jsonMap, err := helpers.BindJSONToMap(c, &createPost)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ResponseCreate{
+			Collection: nil,
+			Status: http.StatusBadRequest,
+			Error: err.Error(),
+		})
+		return
+	}
+		
+	params := params_data.Params{
+		Header: c.GetHeader("UserData"),
+		Param: c.Param("id"),
+		Json: jsonMap,
+	}
+
+	craete, err := create(c, params)
 	if err != nil{
-		c.JSON(http.StatusOK, ResponseCreate{
+		c.JSON(http.StatusBadRequest, ResponseCreate{
 			Collection: nil,
 			Status: http.StatusBadRequest,
 			Error: err.Error(),
@@ -37,8 +56,8 @@ func CreateHandler(c * gin.Context){
 }
 
 
-func create(c *gin.Context) (ResponseCreate, error){
-	userData := c.GetHeader("UserData")
+func create(c *gin.Context, params params_data.Params) (ResponseCreate, error){
+	userData := params.Header
 	var usersData []user_data.User
 	var postsData []post_data.Post
 
@@ -55,18 +74,17 @@ func create(c *gin.Context) (ResponseCreate, error){
 
 	usersData = users
 
-
-	var createPost post_data.Post
-	err = c.BindJSON(&createPost)
-	if err != nil{
-		return ResponseCreate{}, err
-	}
-
+	day := params.Json["day"]
+	weight := params.Json["weight"]
+	kcal := params.Json["kcal"]
+	createdUp := params.Json["createdUp"]
+	updateUp := params.Json["updateUp"]
+	description := params.Json["description"]
 
 
 	query := `INSERT INTO post ("userId", day, weight, kcal, "createdUp", "updateUp", description) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING "id", "userId", "day", "weight", "kcal", "createdUp", "updateUp", "description";`
 
-	rows, err := db.Query(query, usersData[0].Id, createPost.Day, createPost.Weight, createPost.Kcal, createPost.CreatedUp, createPost.UpdateUp, createPost.Description)
+	rows, err := db.Query(query, usersData[0].Id, day, weight, kcal, createdUp, updateUp, description)
 	if err != nil {
 		return ResponseCreate{}, err
 	}

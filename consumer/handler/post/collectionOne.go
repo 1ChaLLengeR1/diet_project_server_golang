@@ -1,6 +1,8 @@
 package post
 
 import (
+	"database/sql"
+	params_data "internal/consumer/data"
 	collection_data "internal/consumer/data/post"
 	user_data "internal/consumer/data/user"
 	database "internal/consumer/database"
@@ -17,9 +19,16 @@ type ResponseCollectionOne struct{
 }
 
 func HandlerCollectionOne(c *gin.Context){
-	collectionOne, err := collectionOne(c)
+
+	params := params_data.Params{
+		Header: c.GetHeader("UserData"),
+		Query: c.Query("private"),
+		Param: c.Param("id"),
+	}
+
+	collectionOne, err := collectionOne(c, params)
 	if err != nil{
-		c.JSON(http.StatusOK, ResponseCollectionOne{
+		c.JSON(http.StatusBadRequest, ResponseCollectionOne{
 			Collection: nil,
 			Status: http.StatusBadRequest,
 			Error: err.Error(),
@@ -34,10 +43,13 @@ func HandlerCollectionOne(c *gin.Context){
 	})
 }
 
-func collectionOne(c *gin.Context)(ResponseCollectionOne, error){
-	userData := c.GetHeader("UserData")
+func collectionOne(c* gin.Context, params params_data.Params)(ResponseCollectionOne, error){
+	userData := params.Header
+	queryParam := params.Query
+
 	var usersData []user_data.User
 	var collectionOneData []collection_data.Collection
+	var query string
 
 
 	db, err := database.ConnectToDataBase()
@@ -45,16 +57,28 @@ func collectionOne(c *gin.Context)(ResponseCollectionOne, error){
 		return ResponseCollectionOne{}, err
 	}
 
-	_, users,  err := auth.CheckUser(userData)
-	if err != nil{
-		return ResponseCollectionOne{}, err
-	}
+	if queryParam == "true" {
+        _, users, err := auth.CheckUser(userData)
+        if err != nil {
+            return ResponseCollectionOne{}, err
+        }
+        usersData = users
 
-	usersData = users
-	id := c.Param("id")
+        query = `SELECT * FROM post WHERE "id" = $1 AND "userId" = $2;`
+    } else {
+        query = `SELECT * FROM post WHERE "id" = $1`
+    }
 
-	query := `SELECT * FROM post WHERE "id" = $1 AND "userId" = $2;`
-	rows, err := db.Query(query, &id, &usersData[0].Id)
+	id := params.Param
+
+
+	var rows *sql.Rows
+    if queryParam == "true" {
+        rows, err = db.Query(query, &id, &usersData[0].Id)
+    } else {
+        rows, err = db.Query(query, &id)
+    }
+
 	if err != nil {
 		return ResponseCollectionOne{}, err
 	}

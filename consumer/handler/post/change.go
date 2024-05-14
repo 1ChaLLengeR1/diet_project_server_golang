@@ -2,10 +2,12 @@ package post
 
 import (
 	"fmt"
+	params_data "internal/consumer/data"
 	change_data "internal/consumer/data/post"
 	user_data "internal/consumer/data/user"
 	database "internal/consumer/database"
 	"internal/consumer/handler/auth"
+	helpers "internal/consumer/helper"
 	"net/http"
 	"strings"
 
@@ -19,9 +21,28 @@ type ResponseChange struct{
 }
 
 func HandlerChange(c *gin.Context){
-	change, err := change(c)
+
+	var changePost change_data.Change
+	jsonMap, err := helpers.BindJSONToMap(c, &changePost)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ResponseCreate{
+			Collection: nil,
+			Status: http.StatusBadRequest,
+			Error: err.Error(),
+		})
+		return
+	}
+		
+	params := params_data.Params{
+		Header: c.GetHeader("UserData"),
+		Param: c.Param("id"),
+		Json: jsonMap,
+	}
+
+
+	change, err := change(c, params)
 	if err != nil{
-		c.JSON(http.StatusOK, ResponseChange{
+		c.JSON(http.StatusBadRequest, ResponseChange{
 			Collection: nil,
 			Status: http.StatusBadRequest,
 			Error: err.Error(),
@@ -36,8 +57,9 @@ func HandlerChange(c *gin.Context){
 	})
 }
 
-func change(c* gin.Context)(ResponseChange, error){
-	userData := c.GetHeader("UserData")
+func change(c *gin.Context, params params_data.Params)(ResponseChange, error){
+	userData := params.Header
+	
 	var usersData []user_data.User
 	var changesData []change_data.Change
 
@@ -54,40 +76,36 @@ func change(c* gin.Context)(ResponseChange, error){
 
 	usersData = users
 
-	var changePost change_data.Change
-	err = c.BindJSON(&changePost)
-	if err != nil{
-		return ResponseChange{}, err
-	}
+	id := params.Param
 
-	
-	id := c.Param("id")
-
+	day, dayOk := params.Json["day"].(float64) 
+	weight, weightOk := params.Json["weight"].(float64)
+	kcal, kcalOk := params.Json["kcal"].(float64)
+	updateUp, updateUpOk := params.Json["updateUp"].(string)
+	description, descriptionOk := params.Json["description"].(string)
 
 	var updateFields []string
-	if changePost.Day != nil {
-        updateFields = append(updateFields, fmt.Sprintf(`"day"='%d'`, *changePost.Day))
-    }
-    if changePost.Weight != nil {
-        updateFields = append(updateFields, fmt.Sprintf(`"weight"='%f'`, *changePost.Weight))
-    }
-    if changePost.Kcal != nil {
-        updateFields = append(updateFields, fmt.Sprintf(`"kcal"='%d'`, *changePost.Kcal))
-    }
-    if changePost.UpdateUp != nil {
-        updateFields = append(updateFields, fmt.Sprintf(`"updateUp"='%s'`, *changePost.UpdateUp))
-    }
-	if changePost.Description != nil {
-        updateFields = append(updateFields, fmt.Sprintf(`"description"='%s'`, *changePost.Description))
-    }
+	if dayOk {
+		updateFields = append(updateFields, fmt.Sprintf(`"day"=%d`, int64(day))) 
+	}
+	if weightOk {
+		updateFields = append(updateFields, fmt.Sprintf(`"weight"=%f`, weight))
+	}
+	if kcalOk {
+		updateFields = append(updateFields, fmt.Sprintf(`"kcal"=%d`, int64(kcal))) 
+	}
+	if updateUpOk {
+		updateFields = append(updateFields, fmt.Sprintf(`"updateUp"='%s'`, updateUp))
+	}
+	if descriptionOk {
+		updateFields = append(updateFields, fmt.Sprintf(`"description"='%s'`, description))
+	}
 
 	if len(updateFields) == 0 {
 		if err != nil {
 			return ResponseChange{}, err
 		}
 	}
-
-
 
 	query := `UPDATE post SET` +  strings.Join(updateFields, ", ") + ` WHERE "id" = $1 AND "userId" = $2 RETURNING "id", "userId", "day", "weight", "kcal", "createdUp", "updateUp", "description";`
 	rows, err := db.Query(query, &id, &usersData[0].Id)

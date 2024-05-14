@@ -1,6 +1,7 @@
 package post
 
 import (
+	params_data "internal/consumer/data"
 	delete_data "internal/consumer/data/post"
 	user_data "internal/consumer/data/user"
 	database "internal/consumer/database"
@@ -17,9 +18,17 @@ type ResponseDelete struct{
 }
 
 func HandlerDelete(c *gin.Context){
-	delete, err := delete(c)
+
+	params := params_data.Params{
+		Header: c.GetHeader("UserData"),
+		Query: c.Query("private"),
+		Param: c.Param("id"),
+	}
+
+
+	delete, err := delete(c, params)
 	if err != nil{
-		c.JSON(http.StatusOK, ResponseDelete{
+		c.JSON(http.StatusBadRequest, ResponseDelete{
 			Collection: nil,
 			Status: http.StatusBadRequest,
 			Error: err.Error(),
@@ -34,8 +43,8 @@ func HandlerDelete(c *gin.Context){
 	})
 }
 
-func delete(c *gin.Context)(ResponseDelete, error){
-	userData := c.GetHeader("UserData")
+func delete(c *gin.Context, params params_data.Params)(ResponseDelete, error){
+	userData := params.Header
 	var usersData []user_data.User
 	var deletesData []delete_data.Delete
 
@@ -52,7 +61,7 @@ func delete(c *gin.Context)(ResponseDelete, error){
 
 	usersData = users
 
-	id := c.Param("id")
+	id := params.Param
 
 	query := `DELETE FROM post WHERE "id" = $1 AND "userId" = $2 RETURNING "id", "userId", "day", "weight", "kcal", "createdUp", "updateUp", "description";`
 	rows, err := db.Query(query, &id, &usersData[0].Id)
