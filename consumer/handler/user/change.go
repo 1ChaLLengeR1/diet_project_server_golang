@@ -5,73 +5,100 @@ import (
 	"net/http"
 	"strings"
 
+	params_data "myInternal/consumer/data"
 	user_data "myInternal/consumer/data/user"
 	database "myInternal/consumer/database"
 	auth "myInternal/consumer/handler/auth"
+	helpers "myInternal/consumer/helper"
 
 	"github.com/gin-gonic/gin"
 )
 
-type User struct{}
 
-func (*User) ChangeUser(c *gin.Context){
-	userData := c.GetHeader("UserData")
-	var changeBody user_data.User
+type ResponseChangeUser struct{
+	Collection []user_data.User `json:"collection"`
+	Status     int              `json:"status"`
+	Error        string           `json:"err"`
+}
+
+func HandlerChangeUser(c *gin.Context){
+	
+	var changeUser user_data.User
+	c.BindJSON(&changeUser)
+	jsonMap, err := helpers.BindJSONToMap(&changeUser)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ResponseChangeUser{
+			Collection: nil,
+			Status: http.StatusBadRequest,
+			Error: err.Error(),
+		})
+		return
+	}
+		
+	params := params_data.Params{
+		Header: c.GetHeader("UserData"),
+		Param: c.Param("id"),
+		Json: jsonMap,
+	}
+
+	change, err := ChangeUser(params)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, ResponseChangeUser{
+			Collection: nil,
+			Status: http.StatusBadRequest,
+			Error: err.Error(),
+		})
+		return
+	}
+	
+	c.JSON(http.StatusOK, ResponseChangeUser{
+		Collection: change.Collection,
+		Status: change.Status,
+		Error: change.Error,
+	})
+
+	
+}
+
+func ChangeUser(params params_data.Params)(ResponseChangeUser, error){
+
 	var user user_data.User
 	var users []user_data.User
+	userData := params.Header
 
 
 	db, err := database.ConnectToDataBase()
 	if err != nil{
-		c.JSON(http.StatusOK, gin.H{
-			"collection": nil,
-			"status": http.StatusBadRequest,
-			"error":err.Error(),
-		})
-		return
+		return ResponseChangeUser{}, err
 	}
 
 	_, users, err = auth.CheckUser(userData)
 	if err != nil{
-		c.JSON(http.StatusOK, gin.H{
-			"collection": nil,
-			"status": http.StatusBadRequest,
-			"error":err.Error(),
-		})
-		return
+		return ResponseChangeUser{}, err
 	}
 
-	err = c.BindJSON(&changeBody)
-	if err != nil{
-		c.JSON(http.StatusBadRequest, gin.H{
-			"collection": nil,
-			"status": http.StatusBadRequest,
-			"error":err.Error(),
-		})
-		return
-	}
+	userName, userNameOk := params.Json["userName"].(string) 
+	lastName, lastNameOk := params.Json["lastName"].(string) 
+	nickName, nickNameOk := params.Json["nickName"].(string) 
+	email, emailOk := params.Json["email"].(string) 
+
 
 	var updateFields []string
-	if changeBody.UserName != nil {
-        updateFields = append(updateFields, fmt.Sprintf(`"userName"='%s'`, *changeBody.UserName))
+	if userNameOk {
+        updateFields = append(updateFields, fmt.Sprintf(`"userName"='%s'`, userName))
     }
-    if changeBody.LastName != nil {
-        updateFields = append(updateFields, fmt.Sprintf(`"lastName"='%s'`, *changeBody.LastName))
+    if lastNameOk {
+        updateFields = append(updateFields, fmt.Sprintf(`"lastName"='%s'`, lastName))
     }
-    if changeBody.NickName != nil {
-        updateFields = append(updateFields, fmt.Sprintf(`"nickName"='%s'`, *changeBody.NickName))
+    if nickNameOk {
+        updateFields = append(updateFields, fmt.Sprintf(`"nickName"='%s'`, nickName))
     }
-    if changeBody.Email != nil {
-        updateFields = append(updateFields, fmt.Sprintf(`"email"='%s'`, *changeBody.Email))
+    if emailOk {
+        updateFields = append(updateFields, fmt.Sprintf(`"email"='%s'`, email))
     }
 
 	if len(updateFields) == 0 {
-		c.JSON(http.StatusOK, gin.H{
-			"collection": nil,
-			"status": http.StatusBadRequest,
-			"error":"no fields to update",
-		})
-		return
+		return ResponseChangeUser{}, err
 	}
 
 	query := `UPDATE users SET ` + strings.Join(updateFields, ", ") + ` WHERE id = $1 RETURNING "id", "userName", "lastName", "nickName", "email", "role";`
@@ -82,17 +109,12 @@ func (*User) ChangeUser(c *gin.Context){
 	defer db.Close()
 
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"collection": nil,
-			"status": http.StatusBadRequest,
-			"error":err.Error(),
-		})
-		return
+		return ResponseChangeUser{}, err
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"collection": users,
-		"status": http.StatusOK,
-		"error":nil,
-	})
+	return ResponseChangeUser{
+		Collection: users,
+		Status: http.StatusOK,
+		Error: "",
+	}, nil
 }
