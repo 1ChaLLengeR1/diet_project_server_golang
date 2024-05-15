@@ -2,12 +2,12 @@ package post
 
 import (
 	"database/sql"
-	params_data "internal/consumer/data"
-	collection_data "internal/consumer/data/post"
-	user_data "internal/consumer/data/user"
-	database "internal/consumer/database"
-	"internal/consumer/handler/auth"
-	helpers "internal/consumer/helper"
+	params_data "myInternal/consumer/data"
+	collection_data "myInternal/consumer/data/post"
+	user_data "myInternal/consumer/data/user"
+	database "myInternal/consumer/database"
+	"myInternal/consumer/handler/auth"
+	helpers "myInternal/consumer/helper"
 	"net/http"
 	"strconv"
 
@@ -30,7 +30,7 @@ func HandlerCollection(c *gin.Context){
 	}
 
 
-	collection, err := collection(c, params)
+	collection, err := Collection(params)
 	if err != nil{
 		c.JSON(http.StatusBadRequest, ResponseCollection{
 			Collection: nil,
@@ -49,7 +49,7 @@ func HandlerCollection(c *gin.Context){
 	})
 }
 
-func collection(c* gin.Context, params params_data.Params)(ResponseCollection, error){
+func Collection(params params_data.Params)(ResponseCollection, error){
 	userData := params.Header
     queryParam := params.Query
 

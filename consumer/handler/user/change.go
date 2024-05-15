@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"strings"
 
-	user_data "internal/consumer/data/user"
-	database "internal/consumer/database"
-	auth "internal/consumer/handler/auth"
+	user_data "myInternal/consumer/data/user"
+	database "myInternal/consumer/database"
+	auth "myInternal/consumer/handler/auth"
 
 	"github.com/gin-gonic/gin"
 )

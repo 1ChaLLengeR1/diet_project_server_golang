@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	application "internal/consumer/application"
-	database "internal/consumer/database"
-	initializers "internal/consumer/initializers"
 	"log"
+	application "myInternal/consumer/application"
+	database "myInternal/consumer/database"
+	initializers "myInternal/consumer/initializers"
 
 	_ "github.com/lib/pq"
 )

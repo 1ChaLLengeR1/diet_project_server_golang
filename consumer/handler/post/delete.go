@@ -1,11 +1,11 @@
 package post
 
 import (
-	params_data "internal/consumer/data"
-	delete_data "internal/consumer/data/post"
-	user_data "internal/consumer/data/user"
-	database "internal/consumer/database"
-	"internal/consumer/handler/auth"
+	params_data "myInternal/consumer/data"
+	delete_data "myInternal/consumer/data/post"
+	user_data "myInternal/consumer/data/user"
+	database "myInternal/consumer/database"
+	"myInternal/consumer/handler/auth"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -26,7 +26,7 @@ func HandlerDelete(c *gin.Context){
 	}
 
 
-	delete, err := delete(c, params)
+	delete, err := Delete(params)
 	if err != nil{
 		c.JSON(http.StatusBadRequest, ResponseDelete{
 			Collection: nil,
@@ -43,7 +43,7 @@ func HandlerDelete(c *gin.Context){
 	})
 }
 
-func delete(c *gin.Context, params params_data.Params)(ResponseDelete, error){
+func Delete(params params_data.Params)(ResponseDelete, error){
 	userData := params.Header
 	var usersData []user_data.User
 	var deletesData []delete_data.Delete

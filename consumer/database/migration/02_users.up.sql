@@ -8,3 +8,8 @@ CREATE TABLE IF NOT EXISTS public.users (
     sub VARCHAR COLLATE pg_catalog."default",
     CONSTRAINT users_pkey PRIMARY KEY (id)
 );
+
+
+
+INSERT INTO users ("userName", "lastName", "nickName", email, role, sub) 
+VALUES('','','test','test@gmail.com','user','1234567890');

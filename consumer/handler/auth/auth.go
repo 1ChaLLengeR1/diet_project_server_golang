@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	user_data "internal/consumer/data/user"
-	database "internal/consumer/database"
+	user_data "myInternal/consumer/data/user"
+	database "myInternal/consumer/database"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

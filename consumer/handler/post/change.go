@@ -2,12 +2,12 @@ package post
 
 import (
 	"fmt"
-	params_data "internal/consumer/data"
-	change_data "internal/consumer/data/post"
-	user_data "internal/consumer/data/user"
-	database "internal/consumer/database"
-	"internal/consumer/handler/auth"
-	helpers "internal/consumer/helper"
+	params_data "myInternal/consumer/data"
+	change_data "myInternal/consumer/data/post"
+	user_data "myInternal/consumer/data/user"
+	database "myInternal/consumer/database"
+	"myInternal/consumer/handler/auth"
+	helpers "myInternal/consumer/helper"
 	"net/http"
 	"strings"
 
@@ -23,7 +23,8 @@ type ResponseChange struct{
 func HandlerChange(c *gin.Context){
 
 	var changePost change_data.Change
-	jsonMap, err := helpers.BindJSONToMap(c, &changePost)
+	c.BindJSON(&changePost)
+	jsonMap, err := helpers.BindJSONToMap(&changePost)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ResponseCreate{
 			Collection: nil,
@@ -40,7 +41,7 @@ func HandlerChange(c *gin.Context){
 	}
 
 
-	change, err := change(c, params)
+	change, err := Change(params)
 	if err != nil{
 		c.JSON(http.StatusBadRequest, ResponseChange{
 			Collection: nil,
@@ -57,7 +58,7 @@ func HandlerChange(c *gin.Context){
 	})
 }
 
-func change(c *gin.Context, params params_data.Params)(ResponseChange, error){
+func Change(params params_data.Params)(ResponseChange, error){
 	userData := params.Header
 	
 	var usersData []user_data.User

@@ -2,25 +2,30 @@ package helper
 
 import (
 	"encoding/json"
-
-	"github.com/gin-gonic/gin"
 )
 
-func BindJSONToMap(c *gin.Context, obj interface{}) (map[string]interface{}, error) {
-
-	if err := c.BindJSON(obj); err != nil {
-		return nil, err
-	}
-
-	jsonData, err := json.Marshal(obj)
+func BindJSONToMap(obj interface{}) (map[string]interface{}, error) {
+	marshaledData, err := json.Marshal(obj)
 	if err != nil {
 		return nil, err
 	}
 
 	var jsonMap map[string]interface{}
-	if err := json.Unmarshal(jsonData, &jsonMap); err != nil {
+	if err := json.Unmarshal(marshaledData, &jsonMap); err != nil {
 		return nil, err
 	}
 
 	return jsonMap, nil
 }
+
+
+func UnmarshalJSONToType(jsonStr string, target interface{}) error {
+
+	err := json.Unmarshal([]byte(jsonStr), target);
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal([]byte(jsonStr), target)
+
+}
+

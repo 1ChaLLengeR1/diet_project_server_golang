@@ -1,10 +1,10 @@
 package application
 
 import (
-	auth_handler "internal/consumer/handler/auth"
-	post_handler "internal/consumer/handler/post"
-	user_handler "internal/consumer/handler/user"
-	"internal/consumer/middleware"
+	auth_handler "myInternal/consumer/handler/auth"
+	post_handler "myInternal/consumer/handler/post"
+	user_handler "myInternal/consumer/handler/user"
+	"myInternal/consumer/middleware"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

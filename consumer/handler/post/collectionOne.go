@@ -2,11 +2,11 @@ package post
 
 import (
 	"database/sql"
-	params_data "internal/consumer/data"
-	collection_data "internal/consumer/data/post"
-	user_data "internal/consumer/data/user"
-	database "internal/consumer/database"
-	"internal/consumer/handler/auth"
+	params_data "myInternal/consumer/data"
+	collection_data "myInternal/consumer/data/post"
+	user_data "myInternal/consumer/data/user"
+	database "myInternal/consumer/database"
+	"myInternal/consumer/handler/auth"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -26,7 +26,7 @@ func HandlerCollectionOne(c *gin.Context){
 		Param: c.Param("id"),
 	}
 
-	collectionOne, err := collectionOne(c, params)
+	collectionOne, err := CollectionOne(params)
 	if err != nil{
 		c.JSON(http.StatusBadRequest, ResponseCollectionOne{
 			Collection: nil,
@@ -43,7 +43,7 @@ func HandlerCollectionOne(c *gin.Context){
 	})
 }
 
-func collectionOne(c* gin.Context, params params_data.Params)(ResponseCollectionOne, error){
+func CollectionOne(params params_data.Params)(ResponseCollectionOne, error){
 	userData := params.Header
 	queryParam := params.Query
 

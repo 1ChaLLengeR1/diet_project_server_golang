@@ -1,12 +1,12 @@
 package post
 
 import (
-	params_data "internal/consumer/data"
-	post_data "internal/consumer/data/post"
-	user_data "internal/consumer/data/user"
-	database "internal/consumer/database"
-	"internal/consumer/handler/auth"
-	helpers "internal/consumer/helper"
+	params_data "myInternal/consumer/data"
+	post_data "myInternal/consumer/data/post"
+	user_data "myInternal/consumer/data/user"
+	database "myInternal/consumer/database"
+	"myInternal/consumer/handler/auth"
+	helpers "myInternal/consumer/helper"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +22,9 @@ type ResponseCreate struct {
 func CreateHandler(c * gin.Context){
 
 	var createPost post_data.Post
-	jsonMap, err := helpers.BindJSONToMap(c, &createPost)
+	c.BindJSON(&createPost)
+
+	jsonMap, err := helpers.BindJSONToMap(&createPost)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ResponseCreate{
 			Collection: nil,
@@ -34,11 +36,10 @@ func CreateHandler(c * gin.Context){
 		
 	params := params_data.Params{
 		Header: c.GetHeader("UserData"),
-		Param: c.Param("id"),
 		Json: jsonMap,
 	}
 
-	craete, err := create(c, params)
+	craete, err := Create(params)
 	if err != nil{
 		c.JSON(http.StatusBadRequest, ResponseCreate{
 			Collection: nil,
@@ -56,7 +57,7 @@ func CreateHandler(c * gin.Context){
 }
 
 
-func create(c *gin.Context, params params_data.Params) (ResponseCreate, error){
+func Create(params params_data.Params) (ResponseCreate, error){
 	userData := params.Header
 	var usersData []user_data.User
 	var postsData []post_data.Post
