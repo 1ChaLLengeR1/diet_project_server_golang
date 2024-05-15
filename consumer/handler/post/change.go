@@ -15,10 +15,12 @@ import (
 )
 
 type ResponseChange struct{
-	Collection []change_data.Change
-	Status     int
-	Error      string
+	Collection []change_data.Change `json:"collection"`
+	Status     int              	`json:"status"`
+	Error      string          		`json:"error"`
 }
+
+
 
 func HandlerChange(c *gin.Context){
 

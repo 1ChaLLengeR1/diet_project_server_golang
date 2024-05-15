@@ -15,11 +15,13 @@ import (
 )
 
 type ResponseCollection struct{
-	Collection []collection_data.Collection
-	Status     int
-	Pagination helpers.PaginationCollectionPost
-	Error      string
+	Collection []collection_data.Collection 	`json:"collection"`
+	Status     int 								`json:"status"` 
+	Pagination helpers.PaginationCollectionPost `json:"pagination"`
+	Error      string 							`json:"error"`
 }
+
+
 
 func HandlerCollection(c *gin.Context){
 

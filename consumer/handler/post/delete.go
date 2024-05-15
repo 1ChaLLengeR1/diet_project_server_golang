@@ -12,9 +12,9 @@ import (
 )
 
 type ResponseDelete struct{
-	Collection []delete_data.Delete
-	Status     int
-	Error      string
+	Collection []delete_data.Delete `json:"collection"`
+	Status     int 					`json:"status"`
+	Error      string				`json:"error"`
 }
 
 func HandlerDelete(c *gin.Context){

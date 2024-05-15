@@ -13,9 +13,9 @@ import (
 )
 
 type ResponseCollectionOne struct{
-	Collection []collection_data.Collection
-	Status     int
-	Error      string
+	Collection []collection_data.Collection `json:"collection"`
+	Status     int							`json:"status"`
+	Error      string 						`json:"error"`
 }
 
 func HandlerCollectionOne(c *gin.Context){

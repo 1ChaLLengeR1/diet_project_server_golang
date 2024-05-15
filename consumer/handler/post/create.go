@@ -13,9 +13,9 @@ import (
 )
 
 type ResponseCreate struct {
-	Collection []post_data.Post
-	Status     int
-	Error      string
+	Collection []post_data.Post `json:"collection"`
+	Status     int 				`json:"status"`
+	Error      string 			`json:"error"`
 }
 
 
