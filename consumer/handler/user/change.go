@@ -18,7 +18,7 @@ import (
 type ResponseChangeUser struct{
 	Collection []user_data.User `json:"collection"`
 	Status     int              `json:"status"`
-	Error        string           `json:"err"`
+	Error      string           `json:"error"`
 }
 
 func HandlerChangeUser(c *gin.Context){
