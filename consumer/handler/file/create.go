@@ -6,13 +6,13 @@ import (
 	"mime/multipart"
 	params_data "myInternal/consumer/data"
 	file_data "myInternal/consumer/data/file"
-	user_data "myInternal/consumer/data/user"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
 	random "myInternal/consumer/helper"
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -66,7 +66,7 @@ func HandlerCreateFile(ctx *gin.Context) {
     }
 
     
-    _, err := CreateFile(params)
+    fileCreate, err := CreateFile(params)
     if err != nil {
         ctx.JSON(http.StatusBadRequest, ResponseFileCreate{
             Collection: nil,
@@ -75,24 +75,28 @@ func HandlerCreateFile(ctx *gin.Context) {
         })
         return
     }
+
+    ctx.JSON(http.StatusOK, ResponseFileCreate{
+		Collection: fileCreate.Collection,
+		Status: fileCreate.Status,
+		Error: fileCreate.Error,
+	})
 }
 
 func CreateFile(params params_data.Params)(ResponseFileCreate, error){
 	userData := params.Header
-	var usersData []user_data.User
-	var uploadedFiles []string
+    var filesData []file_data.Create
 
 	db, err := database.ConnectToDataBase()
 	if err != nil{
 		return ResponseFileCreate{}, err
 	}
 
-	_, users,  err := auth.CheckUser(userData)
+	_, _,  err = auth.CheckUser(userData)
 	if err != nil{
 		return ResponseFileCreate{}, err
 	}
 
-	usersData = users
     index := 0
 
 	for _, files := range params.FormData {
@@ -111,7 +115,7 @@ func CreateFile(params params_data.Params)(ResponseFileCreate, error){
             }
             
 			folder := params.FormDataParams["folder"].(string)
-			folderPath := filepath.Join("consumer", "file", "posts", folder)
+			folderPath := filepath.Join("consumer", "file", folder)
 			if _, err := os.Stat(folderPath); os.IsNotExist(err) {
 				if err := os.MkdirAll(folderPath, 0755); err != nil {
 					return ResponseFileCreate{}, err
@@ -137,16 +141,37 @@ func CreateFile(params params_data.Params)(ResponseFileCreate, error){
             if _, err := io.Copy(dst, src); err != nil {
                 return ResponseFileCreate{}, err
             }
+
+
+            query := `INSERT INTO images ("postId", path, url, "createdUp", "updateUp", folder, name) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING "id", "postId", path, url, "createdUp", "updateUp", folder, name;`
+
+            id := params.FormDataParams["postId"].(string)
+            name := params.FormDataParams["names"].([]string)[index]
+            now := time.Now()
+            formattedDate := now.Format("2006-01-02 15:04:05")
+
+
+            rows, err := db.Query(query, id, dstPath, dstPath, formattedDate, formattedDate, folder, name)
+            if err != nil {
+                return ResponseFileCreate{}, err
+            }
+            defer rows.Close()
+
+            for rows.Next() {
+                var file file_data.Create
+                if err := rows.Scan(&file.Id, &file.PostId, &file.Path, &file.Url, &file.CreatedUp, &file.UpdateUp, &file.Folder, &file.Name); err != nil {
+                    return ResponseFileCreate{}, err
+                }
+                filesData = append(filesData, file)
+            }
             index++;
         }
         
     }
 
-
-
-
-	
-	fmt.Println(uploadedFiles, usersData, db)
-
-	return ResponseFileCreate{}, err
+    return ResponseFileCreate{
+        Collection: filesData,
+        Status: http.StatusOK,
+        Error: "",
+    }, nil
 }
