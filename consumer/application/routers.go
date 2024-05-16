@@ -2,6 +2,7 @@ package application
 
 import (
 	auth_handler "myInternal/consumer/handler/auth"
+	file_handler "myInternal/consumer/handler/file"
 	post_handler "myInternal/consumer/handler/post"
 	user_handler "myInternal/consumer/handler/user"
 	"myInternal/consumer/middleware"
@@ -20,13 +21,19 @@ func loadRouters() *gin.Engine {
 	})
 
 	//post routers
-	postGroup := router.Group("api/post")
+	postGroup := router.Group("/api/post")
 	{
-		postGroup.POST("/create", middleware.EnsureValidToken(), post_handler.CreateHandler, )
+		postGroup.POST("/create", middleware.EnsureValidToken(), post_handler.CreateHandler)
 		postGroup.GET("/collection/:page", middleware.EnsureValidToken(), post_handler.HandlerCollection)
 		postGroup.GET("/one/:id", post_handler.HandlerCollectionOne)
 		postGroup.PATCH("/change/:id", middleware.EnsureValidToken(), post_handler.HandlerChange)
 		postGroup.DELETE("/delete/:id", middleware.EnsureValidToken(), post_handler.HandlerDelete)
+	}
+
+	//file routers
+	fileGroup := router.Group("/api/file")
+	{
+		fileGroup.POST("/create", middleware.EnsureValidToken(), file_handler.HandlerCreateFile)
 	}
 
 	// auth jwt
@@ -36,8 +43,7 @@ func loadRouters() *gin.Engine {
 		authGroup.POST("/authorization", authHander.Authorization)
 	}
 
-	//user
-	
+	//user routers
 	userGroup := router.Group("/api/user", middleware.EnsureValidToken())
 	{
 		userGroup.PATCH("/change", user_handler.HandlerChangeUser)
