@@ -34,6 +34,8 @@ func loadRouters() *gin.Engine {
 	fileGroup := router.Group("/api/file")
 	{
 		fileGroup.POST("/create", middleware.EnsureValidToken(), file_handler.HandlerCreateFile)
+		fileGroup.DELETE("/delete/:deleteId", middleware.EnsureValidToken(), file_handler.HandlerFileDelete)
+		fileGroup.GET("/collection/:postId", file_handler.HandlerFileCollection)
 	}
 
 	// auth jwt
@@ -48,16 +50,6 @@ func loadRouters() *gin.Engine {
 	{
 		userGroup.PATCH("/change", user_handler.HandlerChangeUser)
 	}
-
-
-	router.GET("/api/public", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Hello from a public endpoint! You don't need to be authenticated to see this."})
-	})
-
-	// This route is only accessible if the user has a valid access_token.
-	router.GET("/api/private", middleware.EnsureValidToken(), func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Hello from a private endpoint! You need to be authenticated to see this."})
-	}) 
 
 	return router
 }

@@ -32,7 +32,7 @@ func TestCollectionAll(t *testing.T) {
 	jsonMap, _ := helpers.BindJSONToMap(&createPost)
 
 	params = params_data.Params{
-		Header: common_test.UserDiaxMen,
+		Header: common_test.UserTest,
 		Json:   jsonMap,
 	}
 
@@ -78,7 +78,7 @@ func TestCollectionOne(t *testing.T){
 	jsonMap, _ := helpers.BindJSONToMap(&createPost)
 
 	params = params_data.Params{
-		Header: common_test.UserDiaxMen,
+		Header: common_test.UserTest,
 		Json:   jsonMap,
 	}
 
@@ -89,7 +89,7 @@ func TestCollectionOne(t *testing.T){
 	}
 
 	params = params_data.Params{
-		Header: common_test.UserDiaxMen,
+		Header: common_test.UserTest,
 		Query: "true",
 		Param: valueCreate.Collection[0].Id,
 	}

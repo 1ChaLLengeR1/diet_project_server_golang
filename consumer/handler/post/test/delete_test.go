@@ -32,7 +32,7 @@ func TestDelete(t *testing.T) {
 	jsonMap, _ := helpers.BindJSONToMap(&createPost)
 
 	params = params_data.Params{
-		Header: common_test.UserDiaxMen,
+		Header: common_test.UserTest,
 		Json:   jsonMap,
 	}
 
@@ -43,7 +43,7 @@ func TestDelete(t *testing.T) {
 	}
 
 	params = params_data.Params{
-		Header: common_test.UserDiaxMen,
+		Header: common_test.UserTest,
 		Param: valueCreate.Collection[0].Id,
 		Json: jsonMap,
 	}

@@ -33,7 +33,7 @@ func TestChangeAll(t *testing.T) {
 	jsonMap, _ := helpers.BindJSONToMap(&createPost)
 
 	params = params_data.Params{
-		Header: common_test.UserDiaxMen,
+		Header: common_test.UserTest,
 		Json: jsonMap,
 	}
 
@@ -62,7 +62,7 @@ func TestChangeAll(t *testing.T) {
 	jsonMap, _ = helpers.BindJSONToMap(&changePost)
 
 	params = params_data.Params{
-		Header: common_test.UserDiaxMen,
+		Header: common_test.UserTest,
 		Param: valueCreate.Collection[0].Id,
 		Json: jsonMap,
 	}

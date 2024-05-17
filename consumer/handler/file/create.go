@@ -24,18 +24,17 @@ type ResponseFileCreate struct {
 	Error      string 				`json:"error"`
 }
 
-func HandlerCreateFile(ctx *gin.Context) {
+func HandlerCreateFile(c *gin.Context) {
     formData := make(map[string][]*multipart.FileHeader)
     var nameData []string
-
     
     for i := 0; ; i++ {
-        file, err := ctx.FormFile(fmt.Sprintf("file[%d]", i))
+        file, err := c.FormFile(fmt.Sprintf("file[%d]", i))
         if err != nil {
             if err == http.ErrMissingFile {
                 break 
             }
-            ctx.JSON(http.StatusBadRequest, ResponseFileCreate{
+            c.JSON(http.StatusBadRequest, ResponseFileCreate{
                 Collection: nil,
                 Status:     http.StatusBadRequest,
                 Error:      err.Error(),
@@ -45,9 +44,8 @@ func HandlerCreateFile(ctx *gin.Context) {
         formData[fmt.Sprintf("file[%d]", i)] = append(formData[fmt.Sprintf("file[%d]", i)], file)
     }
 
-    
     for j := 0; ; j++ {
-        name := ctx.PostForm(fmt.Sprintf("name[%d]", j))
+        name := c.PostForm(fmt.Sprintf("name[%d]", j))
         if name == "" {
             break
         }
@@ -56,11 +54,11 @@ func HandlerCreateFile(ctx *gin.Context) {
 
     
     params := params_data.Params{
-        Header: ctx.GetHeader("UserData"),
+        Header: c.GetHeader("UserData"),
         FormData: formData,
         FormDataParams: map[string]interface{}{
-            "postId": ctx.PostForm("postId"),
-            "folder": ctx.PostForm("folder"),
+            "postId": c.PostForm("postId"),
+            "folder": c.PostForm("folder"),
 			"names": nameData,
         },
     }
@@ -68,7 +66,7 @@ func HandlerCreateFile(ctx *gin.Context) {
     
     fileCreate, err := CreateFile(params)
     if err != nil {
-        ctx.JSON(http.StatusBadRequest, ResponseFileCreate{
+        c.JSON(http.StatusBadRequest, ResponseFileCreate{
             Collection: nil,
             Status:     http.StatusBadRequest,
             Error:      err.Error(),
@@ -76,7 +74,7 @@ func HandlerCreateFile(ctx *gin.Context) {
         return
     }
 
-    ctx.JSON(http.StatusOK, ResponseFileCreate{
+    c.JSON(http.StatusOK, ResponseFileCreate{
 		Collection: fileCreate.Collection,
 		Status: fileCreate.Status,
 		Error: fileCreate.Error,
