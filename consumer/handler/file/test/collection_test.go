@@ -3,7 +3,6 @@ package test
 import (
 	"fmt"
 	"mime/multipart"
-	_ "myInternal/consumer/common"
 	common_test "myInternal/consumer/common"
 	helpers "myInternal/consumer/common"
 	params_data "myInternal/consumer/data"
@@ -12,7 +11,7 @@ import (
 	"testing"
 )
 
-func TestCreateFile(t *testing.T) {
+func TestCollectionFile(t *testing.T) {
 	var params params_data.Params
 	formData := make(map[string][]*multipart.FileHeader)
 	i := 0
@@ -22,12 +21,12 @@ func TestCreateFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("createFormData: %v", err)
 	}
-	defer file.Close() 
+	defer file.Close()
 
 	formData[fmt.Sprintf("file[%d]", i)] = append(formData[fmt.Sprintf("file[%d]", i)], fileHeader)
 
 	params = params_data.Params{
-		Header: common_test.UserTest,
+		Header:   common_test.UserTest,
 		FormData: formData,
 		FormDataParams: map[string]interface{}{
 			"postId": common_test.TestUUid,
@@ -37,9 +36,24 @@ func TestCreateFile(t *testing.T) {
 	}
 
 	env.LoadEnv("./.env")
-	_, err = file_function.CreateFile(params)
+	createFile, err := file_function.CreateFile(params)
 	if err != nil {
 		t.Fatalf("createFile error: %v", err)
 	}
+
+	params = params_data.Params{
+		Header: common_test.UserTest,
+		Param: createFile.Collection[0].PostId,
+	}
+
+	collectionFile, err := file_function.FileCollection(params)
+	if err != nil {
+		t.Fatalf("createFile error: %v", err)
+	}
+
+	if len(collectionFile.Collection) == 0{
+		t.Fatalf("collectionFile len is 0 - error: %v", err)
+	}
+
 
 }
