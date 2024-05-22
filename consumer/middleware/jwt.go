@@ -101,17 +101,6 @@ func extractTokenFromHeader(authHeader string) string {
 	return strings.TrimPrefix(authHeader, "Bearer ")
 }
 
-// HasScope checks whether our claims have a specific scope.
-func (c CustomClaims) HasScope(expectedScope string) bool {
-	result := strings.Split(c.Scope, " ")
-	for i := range result {
-		if result[i] == expectedScope {
-			return true
-		}
-	}
-
-	return false
-}
 
 
 

@@ -1,7 +1,7 @@
 package consumer_database
 
 import (
-	env "internal/consumer/initializers"
+	env "myInternal/consumer/initializers"
 	"testing"
 )
 

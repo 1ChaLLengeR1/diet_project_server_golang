@@ -1,10 +1,11 @@
 package application
 
 import (
-	"internal/consumer/handler"
-	auth_handler "internal/consumer/handler/auth"
-	user_handler "internal/consumer/handler/user"
-	"internal/consumer/middleware"
+	auth_handler "myInternal/consumer/handler/auth"
+	file_handler "myInternal/consumer/handler/file"
+	post_handler "myInternal/consumer/handler/post"
+	user_handler "myInternal/consumer/handler/user"
+	"myInternal/consumer/middleware"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,17 +20,22 @@ func loadRouters() *gin.Engine {
 		c.String(http.StatusOK, "Start routers Gin")
 	})
 
-	
-	
 	//post routers
-	postHandler := &handler.Post{}
-	postGroup := router.Group("/post")
+	postGroup := router.Group("/api/post")
 	{
-		postGroup.POST("/", postHandler.Create)
-		postGroup.GET("/", postHandler.Collection)
-		postGroup.GET("/:id", postHandler.GetById)
-		postGroup.PATCH("/:id", postHandler.UpdateById)
-		postGroup.DELETE("/:id", postHandler.DeleteById)
+		postGroup.POST("/create", middleware.EnsureValidToken(), post_handler.CreateHandler)
+		postGroup.GET("/collection/:page", middleware.EnsureValidToken(), post_handler.HandlerCollection)
+		postGroup.GET("/one/:id", post_handler.HandlerCollectionOne)
+		postGroup.PATCH("/change/:id", middleware.EnsureValidToken(), post_handler.HandlerChange)
+		postGroup.DELETE("/delete/:id", middleware.EnsureValidToken(), post_handler.HandlerDelete)
+	}
+
+	//file routers
+	fileGroup := router.Group("/api/file")
+	{
+		fileGroup.POST("/create", middleware.EnsureValidToken(), file_handler.HandlerCreateFile)
+		fileGroup.DELETE("/delete/:deleteId", middleware.EnsureValidToken(), file_handler.HandlerFileDelete)
+		fileGroup.GET("/collection/:postId", file_handler.HandlerFileCollection)
 	}
 
 	// auth jwt
@@ -39,22 +45,11 @@ func loadRouters() *gin.Engine {
 		authGroup.POST("/authorization", authHander.Authorization)
 	}
 
-	//user
-	userHandler :=  &user_handler.User{}
+	//user routers
 	userGroup := router.Group("/api/user", middleware.EnsureValidToken())
 	{
-		userGroup.PATCH("/change", userHandler.ChangeUser)
+		userGroup.PATCH("/change", user_handler.HandlerChangeUser)
 	}
-
-
-	router.GET("/api/public", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Hello from a public endpoint! You don't need to be authenticated to see this."})
-	})
-
-	// This route is only accessible if the user has a valid access_token.
-	router.GET("/api/private", middleware.EnsureValidToken(), func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "Hello from a private endpoint! You need to be authenticated to see this."})
-	}) 
 
 	return router
 }
