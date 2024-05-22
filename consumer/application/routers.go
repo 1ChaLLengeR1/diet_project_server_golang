@@ -23,7 +23,7 @@ func loadRouters() *gin.Engine {
 	//post routers
 	postGroup := router.Group("/api/post")
 	{
-		postGroup.POST("/create", middleware.EnsureValidToken(), post_handler.CreateHandler)
+		postGroup.POST("/create/:projectId", middleware.EnsureValidToken(), post_handler.CreateHandler)
 		postGroup.GET("/collection/:page", middleware.EnsureValidToken(), post_handler.HandlerCollection)
 		postGroup.GET("/one/:id", post_handler.HandlerCollectionOne)
 		postGroup.PATCH("/change/:id", middleware.EnsureValidToken(), post_handler.HandlerChange)
