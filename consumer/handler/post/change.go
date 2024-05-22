@@ -110,7 +110,7 @@ func Change(params params_data.Params)(ResponseChange, error){
 		}
 	}
 
-	query := `UPDATE post SET` +  strings.Join(updateFields, ", ") + ` WHERE "id" = $1 AND "userId" = $2 RETURNING "id", "userId", "day", "weight", "kcal", "createdUp", "updateUp", "description";`
+	query := `UPDATE post SET` +  strings.Join(updateFields, ", ") + ` WHERE "id" = $1 AND "userId" = $2 RETURNING "id", "userId", "projectId", "day", "weight", "kcal", "createdUp", "updateUp", "description";`
 	rows, err := db.Query(query, &id, &usersData[0].Id)
 	if err != nil {
 		return ResponseChange{}, err
@@ -119,7 +119,7 @@ func Change(params params_data.Params)(ResponseChange, error){
 
 	for rows.Next() {
 		var change change_data.Change
-		if err := rows.Scan(&change.Id, &change.UserId, &change.Day, &change.Weight, &change.Kcal, &change.CreatedUp, &change.UpdateUp, &change.Description); err != nil {
+		if err := rows.Scan(&change.Id, &change.UserId, &change.ProjectId, &change.Day, &change.Weight, &change.Kcal, &change.CreatedUp, &change.UpdateUp, &change.Description); err != nil {
 			return ResponseChange{}, err
 		}
 		changesData = append(changesData, change)

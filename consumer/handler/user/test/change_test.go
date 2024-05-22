@@ -34,7 +34,7 @@ func TestChangeUser(t *testing.T) {
 		Json: jsonMap,
 	}
 
-	env.LoadEnv("./../../../../.env")
+	env.LoadEnv("./.env")
 	_, err = user_function.ChangeUser(params)
 	if err != nil {
 		t.Fatalf("Error change user function: %v", err)

@@ -36,6 +36,7 @@ func CreateHandler(c * gin.Context){
 		
 	params := params_data.Params{
 		Header: c.GetHeader("UserData"),
+		Param: c.Param("projectId"),
 		Json: jsonMap,
 	}
 
@@ -76,6 +77,7 @@ func Create(params params_data.Params) (ResponseCreate, error){
 	usersData = users
 
 	day := params.Json["day"]
+	projectId := params.Param
 	weight := params.Json["weight"]
 	kcal := params.Json["kcal"]
 	createdUp := params.Json["createdUp"]
@@ -83,9 +85,9 @@ func Create(params params_data.Params) (ResponseCreate, error){
 	description := params.Json["description"]
 
 
-	query := `INSERT INTO post ("userId", day, weight, kcal, "createdUp", "updateUp", description) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING "id", "userId", "day", "weight", "kcal", "createdUp", "updateUp", "description";`
+	query := `INSERT INTO post ("userId", "projectId", day, weight, kcal, "createdUp", "updateUp", description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id", "userId", "projectId", "day", "weight", "kcal", "createdUp", "updateUp", "description";`
 
-	rows, err := db.Query(query, usersData[0].Id, day, weight, kcal, createdUp, updateUp, description)
+	rows, err := db.Query(query, usersData[0].Id, projectId, day, weight, kcal, createdUp, updateUp, description)
 	if err != nil {
 		return ResponseCreate{}, err
 	}
@@ -93,7 +95,7 @@ func Create(params params_data.Params) (ResponseCreate, error){
 
 	for rows.Next() {
 		var post post_data.Post
-		if err := rows.Scan(&post.Id, &post.UserId, &post.Day, &post.Weight, &post.Kcal, &post.CreatedUp, &post.UpdateUp, &post.Description); err != nil {
+		if err := rows.Scan(&post.Id, &post.UserId, &post.ProjectId, &post.Day, &post.Weight, &post.Kcal, &post.CreatedUp, &post.UpdateUp, &post.Description); err != nil {
 			return ResponseCreate{}, err
 		}
 		postsData = append(postsData, post)

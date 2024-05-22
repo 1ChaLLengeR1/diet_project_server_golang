@@ -29,7 +29,7 @@ func TestCollectionFile(t *testing.T) {
 		Header:   common_test.UserTest,
 		FormData: formData,
 		FormDataParams: map[string]interface{}{
-			"postId": common_test.TestUUid,
+			"projectId": common_test.TestUUid,
 			"folder": "testFolder",
 			"names":  []string{"test"},
 		},
@@ -43,7 +43,7 @@ func TestCollectionFile(t *testing.T) {
 
 	params = params_data.Params{
 		Header: common_test.UserTest,
-		Param: createFile.Collection[0].PostId,
+		Param: createFile.Collection[0].ProjectId,
 	}
 
 	collectionFile, err := file_function.FileCollection(params)

@@ -19,7 +19,7 @@ type ResponseFileCollection struct {
 func HandlerFileCollection(c *gin.Context){
 	params := params_data.Params{
 		Header: c.GetHeader("UserData"),
-		Param: c.Param("postId"),
+		Param: c.Param("projectId"),
 	}
 
 	fileCollection, err := FileCollection(params)
@@ -53,10 +53,10 @@ func FileCollection(params params_data.Params)(ResponseFileCollection, error){
 		return ResponseFileCollection{}, err
 	}
 
-	postId := params.Param
+	projectId := params.Param
 
-	query := `SELECT * FROM images WHERE "postId" = $1`
-	rows, err := db.Query(query, &postId)
+	query := `SELECT * FROM images WHERE "projectId" = $1`
+	rows, err := db.Query(query, &projectId)
 	if err != nil {
 		return ResponseFileCollection{}, err
 	}
@@ -64,7 +64,7 @@ func FileCollection(params params_data.Params)(ResponseFileCollection, error){
 
 	for rows.Next() {
 		var collection file_data.Collection
-		if err := rows.Scan(&collection.Id, &collection.PostId, &collection.Path, &collection.Url, &collection.CreatedUp, &collection.UpdateUp, &collection.Folder, &collection.Name); err != nil {
+		if err := rows.Scan(&collection.Id, &collection.ProjectId, &collection.Path, &collection.Url, &collection.CreatedUp, &collection.UpdateUp, &collection.Folder, &collection.Name); err != nil {
 			return ResponseFileCollection{}, err
 		}
 		filesData = append(filesData, collection)

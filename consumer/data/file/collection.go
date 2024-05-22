@@ -2,7 +2,7 @@ package file
 
 type Collection struct {
 	Id        string `json:"id"`
-	PostId    string `json:"postId"`
+	ProjectId string `json:"projectId"`
 	Name      string `json:"name"`
 	Folder    string `json:"folder"`
 	Path      string `json:"path"`

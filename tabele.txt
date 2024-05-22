@@ -2,7 +2,7 @@ user: id, userName, lastName, email, role
 post: id, projectId,  userId, day, weight, fitatu, createdUp, UpdateUp
 traning: id, userId, type, time, kcal, createdUp, UpdateUp
 images: id, userId, postId, path, url, createdUp, UpdateUp
-project: id, userId, title, description, url, path, createdUp, updateUp
+project: id, userId, title, description, createdUp, updateUp
 
 
 

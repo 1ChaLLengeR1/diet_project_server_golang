@@ -4,8 +4,9 @@ CREATE TABLE IF NOT EXISTS public.post(
     "projectId" UUID,
     day integer,
     weight double precision,
-    fitatu integer,
+    kcal integer,
     "createdUp" date,
     "updateUp" date,
+    description VARCHAR COLLATE pg_catalog."default",
     CONSTRAINT post_pkey PRIMARY KEY (id)
 );

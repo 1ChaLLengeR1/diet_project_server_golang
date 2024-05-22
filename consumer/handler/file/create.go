@@ -57,7 +57,7 @@ func HandlerCreateFile(c *gin.Context) {
         Header: c.GetHeader("UserData"),
         FormData: formData,
         FormDataParams: map[string]interface{}{
-            "postId": c.PostForm("postId"),
+            "projectId": c.PostForm("projectId"),
             "folder": c.PostForm("folder"),
 			"names": nameData,
         },
@@ -141,9 +141,9 @@ func CreateFile(params params_data.Params)(ResponseFileCreate, error){
             }
 
 
-            query := `INSERT INTO images ("postId", path, url, "createdUp", "updateUp", folder, name) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING "id", "postId", path, url, "createdUp", "updateUp", folder, name;`
+            query := `INSERT INTO images ("projectId", path, url, "createdUp", "updateUp", folder, name) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING "id", "projectId", path, url, "createdUp", "updateUp", folder, name;`
 
-            id := params.FormDataParams["postId"].(string)
+            id := params.FormDataParams["projectId"].(string)
             name := params.FormDataParams["names"].([]string)[index]
             now := time.Now()
             formattedDate := now.Format("2006-01-02 15:04:05")
@@ -157,7 +157,7 @@ func CreateFile(params params_data.Params)(ResponseFileCreate, error){
 
             for rows.Next() {
                 var file file_data.Create
-                if err := rows.Scan(&file.Id, &file.PostId, &file.Path, &file.Url, &file.CreatedUp, &file.UpdateUp, &file.Folder, &file.Name); err != nil {
+                if err := rows.Scan(&file.Id, &file.ProjectId, &file.Path, &file.Url, &file.CreatedUp, &file.UpdateUp, &file.Folder, &file.Name); err != nil {
                     return ResponseFileCreate{}, err
                 }
                 filesData = append(filesData, file)

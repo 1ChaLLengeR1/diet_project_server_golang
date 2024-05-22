@@ -33,16 +33,23 @@ func TestCollectionAll(t *testing.T) {
 
 	params = params_data.Params{
 		Header: common_test.UserTest,
-		Json:   jsonMap,
+		Param: common_test.TestUUid,
+		Json: jsonMap,
 	}
 
-	env.LoadEnv("./../../../../.env")
+	env.LoadEnv("./.env")
 
 	for i := 0; i < 3; i++ {
 		_, err := post_function.Create(params)
 		if err != nil {
 			t.Fatalf("Error in create function: %v", err)
 		}
+	}
+
+	params = params_data.Params{
+		Header: common_test.UserTest,
+		Param: "1",
+		Json: jsonMap,
 	}
 
 	valueCollection, err := post_function.Collection(params)
@@ -79,10 +86,11 @@ func TestCollectionOne(t *testing.T){
 
 	params = params_data.Params{
 		Header: common_test.UserTest,
+		Param: common_test.TestUUid,
 		Json:   jsonMap,
 	}
 
-	env.LoadEnv("./../../../../.env")
+	env.LoadEnv("./.env")
 	valueCreate, err := post_function.Create(params)
 	if err != nil {
 			t.Fatalf("Error in create function: %v", err)

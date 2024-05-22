@@ -33,10 +33,11 @@ func TestDelete(t *testing.T) {
 
 	params = params_data.Params{
 		Header: common_test.UserTest,
+		Param: common_test.TestUUid,
 		Json:   jsonMap,
 	}
 
-	env.LoadEnv("./../../../../.env")
+	env.LoadEnv("./.env")
 	valueCreate, err := post_function.Create(params)
 	if err != nil {
 		t.Fatalf("Error create function: %v", err)
