@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -112,7 +113,7 @@ func CreateFile(params params_data.Params)(ResponseFileCreate, error){
                 return ResponseFileCreate{}, err
             }
             
-			folder := params.FormDataParams["folder"].(string)
+			folder := removePolishCharsAndCleanWhiteSpace(params.FormDataParams["folder"].(string)) 
 			folderPath := filepath.Join("consumer", "file", folder)
 			if _, err := os.Stat(folderPath); os.IsNotExist(err) {
 				if err := os.MkdirAll(folderPath, 0755); err != nil {
@@ -128,13 +129,14 @@ func CreateFile(params params_data.Params)(ResponseFileCreate, error){
 				fileName = fmt.Sprintf("%s_%s%s", fileNameWithoutExt, randomStr, fileExtension)
 			}
 
-
+            baseURL := os.Getenv("BASEURL")
             dstPath := filepath.Join(folderPath, fileName)
             dst, err := os.Create(dstPath)
             if err != nil {
                 return ResponseFileCreate{}, err
             }
             defer dst.Close()
+            fullURL := fmt.Sprintf("%s/%s", baseURL, dstPath)
 
             if _, err := io.Copy(dst, src); err != nil {
                 return ResponseFileCreate{}, err
@@ -149,7 +151,7 @@ func CreateFile(params params_data.Params)(ResponseFileCreate, error){
             formattedDate := now.Format("2006-01-02 15:04:05")
 
 
-            rows, err := db.Query(query, id, dstPath, dstPath, formattedDate, formattedDate, folder, name)
+            rows, err := db.Query(query, id, dstPath, fullURL, formattedDate, formattedDate, folder, name)
             if err != nil {
                 return ResponseFileCreate{}, err
             }
@@ -172,4 +174,26 @@ func CreateFile(params params_data.Params)(ResponseFileCreate, error){
         Status: http.StatusOK,
         Error: "",
     }, nil
+}
+
+
+func removePolishCharsAndCleanWhiteSpace(value string) string {
+	polishChars := map[rune]rune{
+		'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n', 'ó': 'o', 'ś': 's', 'ź': 'z', 'ż': 'z',
+		'Ą': 'A', 'Ć': 'C', 'Ę': 'E', 'Ł': 'L', 'Ń': 'N', 'Ó': 'O', 'Ś': 'S', 'Ź': 'Z', 'Ż': 'Z',
+	}
+
+	var builder strings.Builder
+	for _, char := range value {
+		if repl, found := polishChars[char]; found {
+			builder.WriteRune(repl)
+		} else {
+			builder.WriteRune(char)
+		}
+	}
+
+	cleaned := strings.TrimSpace(builder.String())
+	cleaned = strings.ReplaceAll(cleaned, " ", "")
+
+	return cleaned
 }

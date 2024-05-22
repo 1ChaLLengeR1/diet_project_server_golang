@@ -4,6 +4,7 @@ import (
 	auth_handler "myInternal/consumer/handler/auth"
 	file_handler "myInternal/consumer/handler/file"
 	post_handler "myInternal/consumer/handler/post"
+	project_handler "myInternal/consumer/handler/project"
 	user_handler "myInternal/consumer/handler/user"
 	"myInternal/consumer/middleware"
 	"net/http"
@@ -15,10 +16,18 @@ import (
 func loadRouters() *gin.Engine {
 	router := gin.Default()
 	router.Use(gin.Logger())
+	router.Static("/consumer/file", "./consumer/file")
 
 	router.GET("/status", func(c *gin.Context) {
 		c.String(http.StatusOK, "Start routers Gin")
 	})
+
+	// project routers
+
+	projectGroup := router.Group("/api/project")
+	{
+		projectGroup.POST("/create",  middleware.EnsureValidToken(), project_handler.HandlerCreateProject)
+	}
 
 	//post routers
 	postGroup := router.Group("/api/post")

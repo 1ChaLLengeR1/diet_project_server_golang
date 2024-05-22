@@ -23,6 +23,9 @@ func main(){
 		log.Fatal(err)
 	}
 
+
+
+
 	app := application.New()
 	err = app.Start(context.TODO())
 	if err !=nil{
