@@ -26,7 +26,8 @@ func loadRouters() *gin.Engine {
 
 	projectGroup := router.Group("/api/project")
 	{
-		projectGroup.POST("/create",  middleware.EnsureValidToken(), project_handler.HandlerCreateProject)
+		projectGroup.POST("/create", middleware.EnsureValidToken(), project_handler.HandlerCreateProject)
+		projectGroup.DELETE("delete/:projectId", middleware.EnsureValidToken(), project_handler.HandlerDeleteProject)
 	}
 
 	//post routers

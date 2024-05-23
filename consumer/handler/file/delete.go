@@ -58,7 +58,7 @@ func DeleteFile(params params_data.Params)(ResponseFileDelete, error){
 
 	id := params.Param
 
-	query := `DELETE FROM images WHERE "id" = $1 RETURNING "id", "projectId", path, url, "createdUp", "updateUp", folder, name;`
+	query := `DELETE FROM images WHERE "id" = $1 RETURNING "id", "projectId", name, folder, "folderPath", path, url, "createdUp", "updateUp";`
 	rows, err := db.Query(query, &id)
 	if err != nil {
 		return ResponseFileDelete{}, err
@@ -67,7 +67,7 @@ func DeleteFile(params params_data.Params)(ResponseFileDelete, error){
 
 	for rows.Next() {
 		var file file_data.Delete
-		if err := rows.Scan(&file.Id, &file.ProjectId, &file.Path, &file.Url, &file.CreatedUp, &file.UpdateUp, &file.Folder, &file.Name); err != nil {
+		if err := rows.Scan(&file.Id, &file.ProjectId, &file.Name, &file.Folder, &file.FolderPath,  &file.Path, &file.Url, &file.CreatedUp, &file.UpdateUp); err != nil{
 			return ResponseFileDelete{}, err
 		}
 

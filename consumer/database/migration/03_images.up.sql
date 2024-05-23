@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS public.images (
     "projectId" UUID,
     name VARCHAR COLLATE pg_catalog."default",
     folder VARCHAR COLLATE pg_catalog."default",
+    "folderPath" VARCHAR COLLATE pg_catalog."default",
     path VARCHAR COLLATE pg_catalog."default",
     url VARCHAR COLLATE pg_catalog."default",
     "createdUp" date,
