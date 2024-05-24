@@ -29,13 +29,14 @@ func loadRouters() *gin.Engine {
 		projectGroup.POST("/create", middleware.EnsureValidToken(), project_handler.HandlerCreateProject)
 		projectGroup.DELETE("delete/:projectId", middleware.EnsureValidToken(), project_handler.HandlerDeleteProject)
 		projectGroup.PATCH("/change/:projectId", middleware.EnsureValidToken(), project_handler.HandlerChangeProject)
+		projectGroup.GET("/collection/:page", project_handler.HandlerCollectionProject)
 	}
 
 	//post routers
 	postGroup := router.Group("/api/post")
 	{
 		postGroup.POST("/create/:projectId", middleware.EnsureValidToken(), post_handler.CreateHandler)
-		postGroup.GET("/collection/:page", middleware.EnsureValidToken(), post_handler.HandlerCollection)
+		postGroup.GET("/collection/:page", post_handler.HandlerCollection)
 		postGroup.GET("/one/:id", post_handler.HandlerCollectionOne)
 		postGroup.PATCH("/change/:id", middleware.EnsureValidToken(), post_handler.HandlerChange)
 		postGroup.DELETE("/delete/:id", middleware.EnsureValidToken(), post_handler.HandlerDelete)
