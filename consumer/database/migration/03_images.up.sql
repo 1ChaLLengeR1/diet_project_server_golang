@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS public.images (
     "folderPath" VARCHAR COLLATE pg_catalog."default",
     path VARCHAR COLLATE pg_catalog."default",
     url VARCHAR COLLATE pg_catalog."default",
-    "createdUp" date,
-    "updateUp" date,
+    "createdUp" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "updateUp" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT images_pkey PRIMARY KEY (id)
 );

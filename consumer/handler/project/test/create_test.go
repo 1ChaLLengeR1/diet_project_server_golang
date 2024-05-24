@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"mime/multipart"
 	common_test "myInternal/consumer/common"
-	helpersFile "myInternal/consumer/common"
 	params_data "myInternal/consumer/data"
 	project_data "myInternal/consumer/data/project"
 	file_function "myInternal/consumer/handler/file"
@@ -76,7 +75,7 @@ func TestCreateFullProject(t *testing.T) {
 	i := 0
 	pathImg := "./consumer/common/test.png"
 
-	fileHeader, file, err := helpersFile.FileFromPath(pathImg)
+	fileHeader, file, err := common_test.FileFromPath(pathImg)
 	if err != nil {
 		t.Fatalf("createFormData: %v", err)
 	}

@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS public.project(
     "userId" UUID,
     title VARCHAR COLLATE pg_catalog."default",
     description VARCHAR COLLATE pg_catalog."default",
-    "createdUp" date,
-    "updateUp" date,
+    "createdUp" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "updateUp" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT project_pkey PRIMARY KEY (id)
 );
