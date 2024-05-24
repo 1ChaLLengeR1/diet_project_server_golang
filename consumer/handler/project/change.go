@@ -36,7 +36,7 @@ func HandlerChangeProject(c *gin.Context) {
 		
 	params := params_data.Params{
 		Header: c.GetHeader("UserData"),
-		Param: c.Param("changeId"),
+		Param: c.Param("projectId"),
 		Json: jsonMap,
 	}
 
