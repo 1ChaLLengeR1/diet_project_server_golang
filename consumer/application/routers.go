@@ -30,6 +30,7 @@ func loadRouters() *gin.Engine {
 		projectGroup.DELETE("delete/:projectId", middleware.EnsureValidToken(), project_handler.HandlerDeleteProject)
 		projectGroup.PATCH("/change/:projectId", middleware.EnsureValidToken(), project_handler.HandlerChangeProject)
 		projectGroup.GET("/collection/:page", project_handler.HandlerCollectionProject)
+		projectGroup.GET("/collectionOne/:projectId", project_handler.HandlerCollectionOneProject)
 	}
 
 	//post routers
