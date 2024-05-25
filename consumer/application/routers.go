@@ -2,8 +2,10 @@ package application
 
 import (
 	auth_handler "myInternal/consumer/handler/auth"
+	dictionary_handler "myInternal/consumer/handler/dictionary"
 	file_handler "myInternal/consumer/handler/file"
 	post_handler "myInternal/consumer/handler/post"
+	project_handler "myInternal/consumer/handler/project"
 	user_handler "myInternal/consumer/handler/user"
 	"myInternal/consumer/middleware"
 	"net/http"
@@ -15,16 +17,28 @@ import (
 func loadRouters() *gin.Engine {
 	router := gin.Default()
 	router.Use(gin.Logger())
+	router.Static("/consumer/file", "./consumer/file")
 
 	router.GET("/status", func(c *gin.Context) {
 		c.String(http.StatusOK, "Start routers Gin")
 	})
 
+	// project routers
+
+	projectGroup := router.Group("/api/project")
+	{
+		projectGroup.POST("/create", middleware.EnsureValidToken(), project_handler.HandlerCreateProject)
+		projectGroup.DELETE("delete/:projectId", middleware.EnsureValidToken(), project_handler.HandlerDeleteProject)
+		projectGroup.PATCH("/change/:projectId", middleware.EnsureValidToken(), project_handler.HandlerChangeProject)
+		projectGroup.GET("/collection/:page", project_handler.HandlerCollectionProject)
+		projectGroup.GET("/collectionOne/:projectId", project_handler.HandlerCollectionOneProject)
+	}
+
 	//post routers
 	postGroup := router.Group("/api/post")
 	{
-		postGroup.POST("/create", middleware.EnsureValidToken(), post_handler.CreateHandler)
-		postGroup.GET("/collection/:page", middleware.EnsureValidToken(), post_handler.HandlerCollection)
+		postGroup.POST("/create/:projectId", middleware.EnsureValidToken(), post_handler.CreateHandler)
+		postGroup.GET("/collection/:page", post_handler.HandlerCollection)
 		postGroup.GET("/one/:id", post_handler.HandlerCollectionOne)
 		postGroup.PATCH("/change/:id", middleware.EnsureValidToken(), post_handler.HandlerChange)
 		postGroup.DELETE("/delete/:id", middleware.EnsureValidToken(), post_handler.HandlerDelete)
@@ -36,6 +50,12 @@ func loadRouters() *gin.Engine {
 		fileGroup.POST("/create", middleware.EnsureValidToken(), file_handler.HandlerCreateFile)
 		fileGroup.DELETE("/delete/:deleteId", middleware.EnsureValidToken(), file_handler.HandlerFileDelete)
 		fileGroup.GET("/collection/:postId", file_handler.HandlerFileCollection)
+	}
+
+	//dictionary routers
+	dictionaryGroup := router.Group("/api/dictionary")
+	{
+		dictionaryGroup.GET("/collection", dictionary_handler.HandlerCollectionDictionary)
 	}
 
 	// auth jwt

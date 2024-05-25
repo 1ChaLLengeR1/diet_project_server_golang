@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS public.traning (
     type VARCHAR COLLATE pg_catalog."default",
     "time" daterange,
     kcal double precision,
-    "createdUp" date,
-    "updateUp" date,
+   "createdUp" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "updateUp" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT traning_pkey PRIMARY KEY (id)
 );

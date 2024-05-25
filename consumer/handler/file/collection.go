@@ -64,7 +64,7 @@ func FileCollection(params params_data.Params)(ResponseFileCollection, error){
 
 	for rows.Next() {
 		var collection file_data.Collection
-		if err := rows.Scan(&collection.Id, &collection.ProjectId, &collection.Path, &collection.Url, &collection.CreatedUp, &collection.UpdateUp, &collection.Folder, &collection.Name); err != nil {
+		if err := rows.Scan(&collection.Id, &collection.ProjectId, &collection.Path, &collection.Url, &collection.CreatedUp, &collection.UpdateUp, &collection.FolderPath, &collection.Folder, &collection.Name); err != nil {
 			return ResponseFileCollection{}, err
 		}
 		filesData = append(filesData, collection)

@@ -17,12 +17,7 @@ func (p *Auth) Authorization(c *gin.Context) {
 	userData := c.GetHeader("UserData")
 	var usersData []user_data.User
 
-	value, users,  err := CheckUser(userData)
-	if err !=nil{
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	
+	value, users, _ := CheckUser(userData)
 	usersData = users 
 
 	if value{
@@ -63,7 +58,7 @@ func CheckUser(userData string)(bool, []user_data.User, error){
 	row := db.QueryRow(query, data.Sub)
 	err = row.Scan(&user.Id, &user.UserName, &user.LastName, &user.NickName, &user.Email, &user.Role, &user.Sub)
 	if err != nil {
-		return false, nil, fmt.Errorf("error scanning row: %v", err)
+		return true, nil, fmt.Errorf("error scanning row users: %v", err)
 	}
 	users = append(users, user)
 	defer db.Close()

@@ -8,6 +8,7 @@ import (
 	"myInternal/consumer/handler/auth"
 	helpers "myInternal/consumer/helper"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -80,14 +81,14 @@ func Create(params params_data.Params) (ResponseCreate, error){
 	projectId := params.Param
 	weight := params.Json["weight"]
 	kcal := params.Json["kcal"]
-	createdUp := params.Json["createdUp"]
-	updateUp := params.Json["updateUp"]
+	now := time.Now()
+    formattedDate := now.Format("2006-01-02 15:04:05")
 	description := params.Json["description"]
 
 
 	query := `INSERT INTO post ("userId", "projectId", day, weight, kcal, "createdUp", "updateUp", description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id", "userId", "projectId", "day", "weight", "kcal", "createdUp", "updateUp", "description";`
 
-	rows, err := db.Query(query, usersData[0].Id, projectId, day, weight, kcal, createdUp, updateUp, description)
+	rows, err := db.Query(query, usersData[0].Id, projectId, day, weight, kcal, formattedDate, formattedDate, description)
 	if err != nil {
 		return ResponseCreate{}, err
 	}

@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -112,7 +113,7 @@ func CreateFile(params params_data.Params)(ResponseFileCreate, error){
                 return ResponseFileCreate{}, err
             }
             
-			folder := params.FormDataParams["folder"].(string)
+			folder := removePolishCharsAndCleanWhiteSpace(params.FormDataParams["folder"].(string)) 
 			folderPath := filepath.Join("consumer", "file", folder)
 			if _, err := os.Stat(folderPath); os.IsNotExist(err) {
 				if err := os.MkdirAll(folderPath, 0755); err != nil {
@@ -128,28 +129,30 @@ func CreateFile(params params_data.Params)(ResponseFileCreate, error){
 				fileName = fmt.Sprintf("%s_%s%s", fileNameWithoutExt, randomStr, fileExtension)
 			}
 
-
+            baseURL := os.Getenv("BASEURL")
             dstPath := filepath.Join(folderPath, fileName)
             dst, err := os.Create(dstPath)
             if err != nil {
                 return ResponseFileCreate{}, err
             }
             defer dst.Close()
+            fullURL := fmt.Sprintf("%s/%s", baseURL, dstPath)
 
             if _, err := io.Copy(dst, src); err != nil {
                 return ResponseFileCreate{}, err
             }
 
 
-            query := `INSERT INTO images ("projectId", path, url, "createdUp", "updateUp", folder, name) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING "id", "projectId", path, url, "createdUp", "updateUp", folder, name;`
+            query := `INSERT INTO images ("projectId", name, folder, "folderPath", path, url, "createdUp", "updateUp") VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id", "projectId", name, folder, "folderPath", path, url, "createdUp", "updateUp";`
 
             id := params.FormDataParams["projectId"].(string)
             name := params.FormDataParams["names"].([]string)[index]
             now := time.Now()
             formattedDate := now.Format("2006-01-02 15:04:05")
+            folderPath = fmt.Sprintf("%s\\", filepath.Join("consumer", "file", folder))
 
 
-            rows, err := db.Query(query, id, dstPath, dstPath, formattedDate, formattedDate, folder, name)
+            rows, err := db.Query(query, id,name, folder, folderPath, dstPath, fullURL, formattedDate, formattedDate)
             if err != nil {
                 return ResponseFileCreate{}, err
             }
@@ -157,7 +160,7 @@ func CreateFile(params params_data.Params)(ResponseFileCreate, error){
 
             for rows.Next() {
                 var file file_data.Create
-                if err := rows.Scan(&file.Id, &file.ProjectId, &file.Path, &file.Url, &file.CreatedUp, &file.UpdateUp, &file.Folder, &file.Name); err != nil {
+                if err := rows.Scan(&file.Id, &file.ProjectId, &file.Name, &file.Folder, &file.FolderPath,  &file.Path, &file.Url, &file.CreatedUp, &file.UpdateUp); err != nil {
                     return ResponseFileCreate{}, err
                 }
                 filesData = append(filesData, file)
@@ -172,4 +175,26 @@ func CreateFile(params params_data.Params)(ResponseFileCreate, error){
         Status: http.StatusOK,
         Error: "",
     }, nil
+}
+
+
+func removePolishCharsAndCleanWhiteSpace(value string) string {
+	polishChars := map[rune]rune{
+		'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n', 'ó': 'o', 'ś': 's', 'ź': 'z', 'ż': 'z',
+		'Ą': 'A', 'Ć': 'C', 'Ę': 'E', 'Ł': 'L', 'Ń': 'N', 'Ó': 'O', 'Ś': 'S', 'Ź': 'Z', 'Ż': 'Z',
+	}
+
+	var builder strings.Builder
+	for _, char := range value {
+		if repl, found := polishChars[char]; found {
+			builder.WriteRune(repl)
+		} else {
+			builder.WriteRune(char)
+		}
+	}
+
+	cleaned := strings.TrimSpace(builder.String())
+	cleaned = strings.ReplaceAll(cleaned, " ", "")
+
+	return cleaned
 }
