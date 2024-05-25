@@ -3,6 +3,7 @@ package data
 import "mime/multipart"
 
 type Params struct {
+	AppLanguage string
 	Header   string
 	Query    string
 	Param    string
