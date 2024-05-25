@@ -2,6 +2,7 @@ package application
 
 import (
 	auth_handler "myInternal/consumer/handler/auth"
+	dictionary_handler "myInternal/consumer/handler/dictionary"
 	file_handler "myInternal/consumer/handler/file"
 	post_handler "myInternal/consumer/handler/post"
 	project_handler "myInternal/consumer/handler/project"
@@ -49,6 +50,12 @@ func loadRouters() *gin.Engine {
 		fileGroup.POST("/create", middleware.EnsureValidToken(), file_handler.HandlerCreateFile)
 		fileGroup.DELETE("/delete/:deleteId", middleware.EnsureValidToken(), file_handler.HandlerFileDelete)
 		fileGroup.GET("/collection/:postId", file_handler.HandlerFileCollection)
+	}
+
+	//dictionary routers
+	dictionaryGroup := router.Group("/api/dictionary")
+	{
+		dictionaryGroup.GET("/collection", dictionary_handler.HandlerCollectionDictionary)
 	}
 
 	// auth jwt
