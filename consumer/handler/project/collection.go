@@ -26,6 +26,7 @@ func HandlerCollectionProject(c *gin.Context) {
 	params := params_data.Params{
 		Header: c.GetHeader("UserData"),
 		Query: c.Query("private"),
+		AppLanguage: c.GetHeader("AppLanguage"),
 		Param: c.Param("page"),
 	}
 
@@ -52,7 +53,7 @@ func HandlerCollectionProject(c *gin.Context) {
 func CollectionProject(params params_data.Params)(ResponseCollectionProject, error) {
 	userData := params.Header
     queryParam := params.Query
-
+	appLanguage := params.AppLanguage
 
     var usersData []user_data.User
     var collectionsData []project_data.Collection
@@ -73,9 +74,49 @@ func CollectionProject(params params_data.Params)(ResponseCollectionProject, err
         }
         usersData = users
 
-        query = `SELECT * FROM project WHERE "userId" = $1 ORDER BY "createdUp" DESC LIMIT $2 OFFSET $3;`
+        query = `WITH filtered_projects AS (
+			SELECT * 
+			FROM project 
+			WHERE "userId" = $1 
+			ORDER BY "createdUp" DESC 
+			LIMIT $2 OFFSET $3
+		)
+		SELECT 
+			p.id, 
+			p."userId", 
+			pml."idLanguage", 
+			pml.title, 
+			pml.description, 
+			p."createdUp", 
+			p."updateUp"
+		FROM 
+			filtered_projects p
+		JOIN 
+			project_multi_language pml ON p.id = pml."idProject"
+		WHERE 
+			pml."idLanguage" = $4;
+		`
     } else {
-        query = `SELECT * FROM project ORDER BY "createdUp" DESC LIMIT $1 OFFSET $2;`
+        query = `WITH limited_projects AS (
+			SELECT * 
+			FROM project 
+			ORDER BY "createdUp" DESC 
+			LIMIT $1 OFFSET $2
+		)
+		SELECT 
+			lp.id, 
+			lp."userId", 
+			pml."idLanguage", 
+			pml.title, 
+			pml.description, 
+			lp."createdUp", 
+			lp."updateUp"
+		FROM 
+			limited_projects lp
+		JOIN 
+			project_multi_language pml ON lp.id = pml."idProject"
+		WHERE 
+			pml."idLanguage" = $3;`
     }
 
 	pageStr := params.Param
@@ -87,9 +128,9 @@ func CollectionProject(params params_data.Params)(ResponseCollectionProject, err
 
 	var rows *sql.Rows
     if queryParam == "true" {
-        rows, err = db.Query(query, &usersData[0].Id, perPage, pagination.Offset)
+        rows, err = db.Query(query, &usersData[0].Id, perPage, pagination.Offset, appLanguage)
     } else {
-        rows, err = db.Query(query, perPage, pagination.Offset)
+        rows, err = db.Query(query, perPage, pagination.Offset, appLanguage)
     }
 
 	if err != nil {
@@ -99,7 +140,7 @@ func CollectionProject(params params_data.Params)(ResponseCollectionProject, err
 
 	for rows.Next() {
 		var collection project_data.Collection
-		if err := rows.Scan(&collection.Id, &collection.UserId, &collection.Title, &collection.Description, &collection.CreatedUp, &collection.UpdateUp); err != nil {
+		if err := rows.Scan(&collection.Id, &collection.UserId, &collection.IdLanguage, &collection.Title, &collection.Description, &collection.CreatedUp, &collection.UpdateUp); err != nil {
 			return ResponseCollectionProject{}, err
 		}
 		collectionsData = append(collectionsData, collection)
