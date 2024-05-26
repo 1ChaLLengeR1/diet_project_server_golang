@@ -14,6 +14,7 @@ import (
 
 type ResponseDeleteProject struct {
 	Collection []project_data.Delete 	`json:"collection"`
+	CollectionRemoveId []string			`json:"collectionRemoveId"`
 	Status     int 						`json:"status"`
 	Error      string 					`json:"error"`
 }
@@ -46,6 +47,7 @@ func DeleteProject(params params_data.Params)(ResponseDeleteProject, error){
 	userData := params.Header
 	var usersData []user_data.User
 	var deletesData []project_data.Delete
+	var removeFiles []string
 
 
 	db, err := database.ConnectToDataBase()
@@ -68,14 +70,22 @@ func DeleteProject(params params_data.Params)(ResponseDeleteProject, error){
 	}
 	defer rows.Close()
 
-	var delete post_data.Delete
 	for rows.Next() {
-		if err := rows.Scan(&delete.Id, &delete.UserId, &delete.ProjectId, &delete.Day, &delete.Weight, &delete.Kcal, &delete.CreatedUp, &delete.UpdateUp, &delete.Description); err != nil {
+		var post post_data.Delete
+		if err := rows.Scan(&post.Id, &post.UserId, &post.ProjectId, &post.Day, &post.Weight, &post.Kcal, &post.CreatedUp, &post.UpdateUp, &post.Description); err != nil {
 			return ResponseDeleteProject{}, err
 		}
+		removeFiles = append(removeFiles, post.Id)
 	}
 
-	query = `DELETE FROM project WHERE "id" = $1 AND "userId" = $2 RETURNING "id", "userId", title, description, "createdUp", "updateUp";`
+	query = `DELETE FROM project_multi_language WHERE "idProject" = $1;`
+	rows, err = db.Query(query, &projectId)
+	if err != nil {
+		return ResponseDeleteProject{}, err
+	}
+	defer rows.Close()
+
+	query = `DELETE FROM project WHERE "id" = $1 AND "userId" = $2 RETURNING "id", "userId", "createdUp", "updateUp";`
 	rows, err = db.Query(query, &projectId, usersData[0].Id)
 	if err != nil {
 		return ResponseDeleteProject{}, err
@@ -84,14 +94,16 @@ func DeleteProject(params params_data.Params)(ResponseDeleteProject, error){
 
 	for rows.Next() {
 		var project project_data.Delete
-		if err := rows.Scan(&project.Id, &project.UserId, &project.Title, &project.Description, &project.CreatedUp, &project.UpdateUp); err != nil {
+		if err := rows.Scan(&project.Id, &project.UserId, &project.CreatedUp, &project.UpdateUp); err != nil {
 			return ResponseDeleteProject{}, err
 		}
+		removeFiles = append(removeFiles, projectId)
 		deletesData = append(deletesData, project)
 	}
 
 	return ResponseDeleteProject{
 		Collection: deletesData,
+		CollectionRemoveId: removeFiles,
 		Status: http.StatusOK,
 		Error: "",
 	}, nil
