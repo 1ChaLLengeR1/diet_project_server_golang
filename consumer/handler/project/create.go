@@ -67,7 +67,8 @@ func CreateProject(params params_data.Params)(ResponseCreateProject, error) {
 	var projectsData []project_data.Create
 
 	if appLanguage == ""{
-		return ResponseCreateProject{}, fmt.Errorf("appLanguage is nil or empty!")
+		return ResponseCreateProject{}, fmt.Errorf("appLanguage is nil or empty: %v", appLanguage)
+
 	}
 
 	db, err := database.ConnectToDataBase()
@@ -101,7 +102,7 @@ func CreateProject(params params_data.Params)(ResponseCreateProject, error) {
 		}
 	}
 
-	query = `INSERT INTO project_multi_language ("idProject", "idLanguage", "title", "description") VALUES($1, $2, $3, $4) RETURNING "id", "idProject", "idLanguage", "title", "description";`
+	query = `INSERT INTO project_multi_language ("idProject", "idLanguage", "title", "description") VALUES($1, $2, $3, $4);`
 	rows, err = db.Query(query, &project.Id, appLanguage, title, description)
     if err != nil {
         return ResponseCreateProject{}, err

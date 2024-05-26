@@ -28,6 +28,7 @@ func TestChangeProject(t *testing.T) {
 	params := params_data.Params{
 		Header: common_test.UserTest,
 		Param:  common_test.TestUUid,
+		AppLanguage: common_test.AppLanguagePL,
 		Json:   jsonMap,
 	}
 
@@ -53,6 +54,7 @@ func TestChangeProject(t *testing.T) {
 	params = params_data.Params{
 		Header: common_test.UserTest,
 		Param:  project.Collection[0].Id,
+		AppLanguage: common_test.AppLanguagePL,
 		Json:   jsonMap,
 	}
 
