@@ -30,6 +30,7 @@ func HandlerDeleteProject(c *gin.Context) {
 	if err != nil{
 		c.JSON(http.StatusBadRequest, ResponseDeleteProject{
 			Collection: nil,
+			CollectionRemoveId: nil,
 			Status: http.StatusBadRequest,
 			Error: err.Error(),
 		})
@@ -38,6 +39,7 @@ func HandlerDeleteProject(c *gin.Context) {
 
 	c.JSON(http.StatusOK, ResponseDeleteProject{
 		Collection: projectDelete.Collection,
+		CollectionRemoveId: projectDelete.CollectionRemoveId,
 		Status: projectDelete.Status,
 		Error: projectDelete.Error,
 	})

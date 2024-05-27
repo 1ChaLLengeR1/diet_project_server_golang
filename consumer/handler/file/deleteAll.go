@@ -20,14 +20,9 @@ type ResponseFileAllDelete struct {
 	Error      string             `json:"error"`
 }
 
-type RequestBody struct {
-    IDs []string `json:"ids"`
-}
-
-
 func HandlerFileAllDelete(c *gin.Context) {
 
-	var removeIds RequestBody
+	var removeIds file_data.RemoveId
 	c.BindJSON(&removeIds)
 	jsonMap, err := helpers.BindJSONToMap(&removeIds)
 	if err != nil {
