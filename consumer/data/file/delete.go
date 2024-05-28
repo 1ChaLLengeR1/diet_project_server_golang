@@ -11,3 +11,7 @@ type Delete struct {
 	CreatedUp  string `json:"createdUp"`
 	UpdateUp   string `json:"updateUp"`
 }
+
+type RemoveId struct {
+	Ids []string `json:"ids"`
+}

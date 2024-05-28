@@ -32,6 +32,7 @@ func TestCreateProject(t *testing.T) {
 	params := params_data.Params{
 		Header: common_test.UserTest,
 		Param: common_test.TestUUid,
+		AppLanguage: common_test.AppLanguagePL,
 		Json: jsonMap,
 	}
 
@@ -62,6 +63,7 @@ func TestCreateFullProject(t *testing.T) {
 	params := params_data.Params{
 		Header: common_test.UserTest,
 		Param: common_test.TestUUid,
+		AppLanguage: common_test.AppLanguagePL,
 		Json: jsonMap,
 	}
 

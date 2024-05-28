@@ -37,6 +37,7 @@ func HandlerChangeProject(c *gin.Context) {
 	params := params_data.Params{
 		Header: c.GetHeader("UserData"),
 		Param: c.Param("projectId"),
+		AppLanguage: c.GetHeader("AppLanguage"),
 		Json: jsonMap,
 	}
 
@@ -59,6 +60,7 @@ func HandlerChangeProject(c *gin.Context) {
 
 func ChangeProject(params params_data.Params)(ResponseChnageProject, error){
 	userData := params.Header
+	appLanguage := params.AppLanguage
 	
 	var usersData []user_data.User
 	var changesData []project_data.Change
@@ -79,7 +81,7 @@ func ChangeProject(params params_data.Params)(ResponseChnageProject, error){
 
 	title, titleOk := params.Json["title"].(string)
 	description, descriptionOk := params.Json["description"].(string)
-	updateUp, updateUpOk := params.Json["updateUp"].(string)
+	updateUp, _ := params.Json["updateUp"].(string)
 	
 	var updateFields []string
 	if titleOk {
@@ -88,26 +90,53 @@ func ChangeProject(params params_data.Params)(ResponseChnageProject, error){
 	if descriptionOk {
 		updateFields = append(updateFields, fmt.Sprintf(`"description"='%s'`, description))
 	}
-	if updateUpOk {
-		updateFields = append(updateFields, fmt.Sprintf(`"updateUp"='%s'`, updateUp)) 
-	}
-
+	
 	if len(updateFields) == 0 {
 		if err != nil {
 			return ResponseChnageProject{}, err
 		}
 	}
 
-	query := `UPDATE project SET` +  strings.Join(updateFields, ", ") + ` WHERE "id" = $1 AND "userId" = $2 RETURNING "id", "userId", "title", "description", "createdUp", "updateUp";`
+	updateUpData := fmt.Sprintf(`"updateUp"='%s'`, updateUp)
+	query := `UPDATE project SET` + updateUpData + ` WHERE "id" = $1 AND "userId" = $2`
 	rows, err := db.Query(query, &id, &usersData[0].Id)
 	if err != nil {
 		return ResponseChnageProject{}, err
 	}
 	defer rows.Close()
 
+
+	query = `UPDATE project_multi_language SET ` + strings.Join(updateFields, ", ") + ` WHERE "idProject" = $1 AND "idLanguage" = $2;`
+	result, err := db.Exec(query, id, appLanguage)
+	if err != nil {
+		return ResponseChnageProject{}, err
+	}
+	
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return ResponseChnageProject{}, err
+	}
+	
+	if rowsAffected == 0 {
+		query = `INSERT INTO project_multi_language ("idProject", "idLanguage", "title", "description") VALUES($1, $2, $3, $4);`
+		rows, err = db.Query(query, id, appLanguage, title, description)
+		if err != nil {
+			return ResponseChnageProject{}, err
+		}
+	} 
+	defer rows.Close()
+
+	query = `SELECT p.id, p."userId", pml."idLanguage", pml.title, pml.description, p."createdUp", p."updateUp" FROM project p JOIN 
+    project_multi_language pml ON p.id = pml."idProject" WHERE  p.id = $1 AND pml."idLanguage" = $2;`
+	rows, err = db.Query(query, id, appLanguage)
+    if err != nil {
+        return ResponseChnageProject{}, err
+    }
+	defer rows.Close()
+
 	for rows.Next() {
 		var change project_data.Change
-		if err := rows.Scan(&change.Id, &change.UserId, &change.Title, &change.Description, &change.CreatedUp, &change.UpdateUp); err != nil {
+		if err := rows.Scan(&change.Id, &change.UserId, &change.IdLanguage, &change.Title, &change.Description, &change.CreatedUp, &change.UpdateUp); err != nil {
 			return ResponseChnageProject{}, err
 		}
 		changesData = append(changesData, change)

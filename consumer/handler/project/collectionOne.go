@@ -23,6 +23,7 @@ func HandlerCollectionOneProject(c *gin.Context){
 	params := params_data.Params{
 		Header: c.GetHeader("UserData"),
 		Query: c.Query("private"),
+		AppLanguage: c.GetHeader("AppLanguage"),
 		Param: c.Param("projectId"),
 	}
 
@@ -46,6 +47,7 @@ func HandlerCollectionOneProject(c *gin.Context){
 func CollectionOneProject(params params_data.Params)(ResponseCollectionOneProject, error){
 	userData := params.Header
 	queryParam := params.Query
+	appLanguage := params.AppLanguage
 
 	var usersData []user_data.User
 	var collectionOneData []project_data.Collection
@@ -63,18 +65,51 @@ func CollectionOneProject(params params_data.Params)(ResponseCollectionOneProjec
         }
         usersData = users
 
-        query = `SELECT * FROM project WHERE "id" = $1 AND "userId" = $2;`
+        query = `WITH filtered_projects AS (
+			SELECT * 
+			FROM project 
+			WHERE "userId" = $1
+		)
+		SELECT 
+			p.id, 
+			p."userId", 
+			pml."idLanguage", 
+			pml.title, 
+			pml.description, 
+			p."createdUp", 
+			p."updateUp"
+		FROM 
+			filtered_projects p
+		JOIN 
+			project_multi_language pml ON p.id = pml."idProject"
+		WHERE 
+			p.id = $2
+			AND pml."idLanguage" = $3;`
     } else {
-        query = `SELECT * FROM project WHERE "id" = $1`
+        query = `SELECT 
+		p.id,
+		p."userId",
+		pml."idLanguage",
+		pml.title,
+		pml.description,
+		p."createdUp",
+		p."updateUp"
+		FROM 
+			project p
+		JOIN 
+			project_multi_language pml ON p.id = pml."idProject"
+		WHERE 
+			p.id = $1
+			AND pml."idLanguage" = $2;`
     }
 
 	id := params.Param
 
 	var rows *sql.Rows
     if queryParam == "true" {
-        rows, err = db.Query(query, &id, &usersData[0].Id)
+        rows, err = db.Query(query, &usersData[0].Id, &id, appLanguage)
     } else {
-        rows, err = db.Query(query, &id)
+        rows, err = db.Query(query, &id, appLanguage)
     }
 
 	if err != nil {
@@ -84,7 +119,7 @@ func CollectionOneProject(params params_data.Params)(ResponseCollectionOneProjec
 
 	for rows.Next() {
 		var collection project_data.Collection
-		if err := rows.Scan(&collection.Id, &collection.UserId, &collection.Title, &collection.Description, &collection.CreatedUp, &collection.UpdateUp); err != nil {
+		if err := rows.Scan(&collection.Id, &collection.UserId, &collection.IdLanguage, &collection.Title, &collection.Description, &collection.CreatedUp, &collection.UpdateUp); err != nil {
 			return ResponseCollectionOneProject{}, err
 		}
 		collectionOneData = append(collectionOneData, collection)

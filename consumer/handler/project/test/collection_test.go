@@ -28,6 +28,7 @@ func TestCollectionProject(t *testing.T) {
 	params := params_data.Params{
 		Header: common_test.UserTest,
 		Param: common_test.TestUUid,
+		AppLanguage: common_test.AppLanguagePL,
 		Json: jsonMap,
 	}
 
@@ -39,6 +40,7 @@ func TestCollectionProject(t *testing.T) {
 
 	params = params_data.Params{
 		Header: common_test.UserTest,
+		AppLanguage: common_test.AppLanguagePL,
 		Param: "1",
 		Query: "true",
 	}
@@ -71,6 +73,7 @@ func TestCollectionOne(t *testing.T){
 	params := params_data.Params{
 		Header: common_test.UserTest,
 		Param: common_test.TestUUid,
+		AppLanguage: common_test.AppLanguagePL,
 		Json: jsonMap,
 	}
 
@@ -83,6 +86,7 @@ func TestCollectionOne(t *testing.T){
 	params = params_data.Params{
 		Header: common_test.UserTest,
 		Param: project.Collection[0].Id,
+		AppLanguage: common_test.AppLanguagePL,
 		Query: "true",
 	}
 

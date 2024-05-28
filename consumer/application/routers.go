@@ -24,7 +24,6 @@ func loadRouters() *gin.Engine {
 	})
 
 	// project routers
-
 	projectGroup := router.Group("/api/project")
 	{
 		projectGroup.POST("/create", middleware.EnsureValidToken(), project_handler.HandlerCreateProject)
@@ -50,6 +49,7 @@ func loadRouters() *gin.Engine {
 		fileGroup.POST("/create", middleware.EnsureValidToken(), file_handler.HandlerCreateFile)
 		fileGroup.DELETE("/delete/:deleteId", middleware.EnsureValidToken(), file_handler.HandlerFileDelete)
 		fileGroup.GET("/collection/:postId", file_handler.HandlerFileCollection)
+		fileGroup.DELETE("/deleteAll", middleware.EnsureValidToken(), file_handler.HandlerFileAllDelete)
 	}
 
 	//dictionary routers

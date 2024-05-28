@@ -4,3 +4,4 @@ DROP TABLE IF EXISTS traning;
 DROP TABLE IF EXISTS images;
 DROP TABLE IF EXISTS project;
 DROP TABLE IF EXISTS dictionary;
+DROP TABLE IF EXISTS project_multi_language;
