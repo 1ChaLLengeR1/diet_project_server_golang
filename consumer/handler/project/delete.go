@@ -65,7 +65,7 @@ func DeleteProject(params params_data.Params)(ResponseDeleteProject, error){
 	usersData = users
 	projectId := params.Param
 
-	query := `DELETE FROM post WHERE "projectId" = $1 AND "userId" = $2 RETURNING "id", "userId", "projectId", "day", "weight", "kcal", "createdUp", "updateUp", "description";`
+	query := `DELETE FROM post WHERE "projectId" = $1 AND "userId" = $2 RETURNING "id", "userId", "projectId", "day", "weight", "kcal", "createdUp", "updateUp";`
 	rows, err := db.Query(query, &projectId, usersData[0].Id)
 	if err != nil {
 		return ResponseDeleteProject{}, err
@@ -74,7 +74,7 @@ func DeleteProject(params params_data.Params)(ResponseDeleteProject, error){
 
 	for rows.Next() {
 		var post post_data.Delete
-		if err := rows.Scan(&post.Id, &post.UserId, &post.ProjectId, &post.Day, &post.Weight, &post.Kcal, &post.CreatedUp, &post.UpdateUp, &post.Description); err != nil {
+		if err := rows.Scan(&post.Id, &post.UserId, &post.ProjectId, &post.Day, &post.Weight, &post.Kcal, &post.CreatedUp, &post.UpdateUp); err != nil {
 			return ResponseDeleteProject{}, err
 		}
 		removeFiles = append(removeFiles, post.Id)

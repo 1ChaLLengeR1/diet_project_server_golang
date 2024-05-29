@@ -86,7 +86,7 @@ func CollectionOne(params params_data.Params)(ResponseCollectionOne, error){
 
 	for rows.Next() {
 		var collection collection_data.Collection
-		if err := rows.Scan(&collection.Id, &collection.UserId, &collection.ProjectId, &collection.Day, &collection.Weight, &collection.Kcal, &collection.CreatedUp, &collection.UpdateUp, &collection.Description); err != nil {
+		if err := rows.Scan(&collection.Id, &collection.UserId, &collection.ProjectId, &collection.Day, &collection.Weight, &collection.Kcal, &collection.CreatedUp, &collection.UpdateUp); err != nil {
 			return ResponseCollectionOne{}, err
 		}
 		collectionOneData = append(collectionOneData, collection)

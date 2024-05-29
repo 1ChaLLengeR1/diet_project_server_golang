@@ -7,6 +7,5 @@ CREATE TABLE IF NOT EXISTS public.post(
     kcal integer,
     "createdUp" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "updateUp" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    description VARCHAR COLLATE pg_catalog."default",
     CONSTRAINT post_pkey PRIMARY KEY (id)
 );

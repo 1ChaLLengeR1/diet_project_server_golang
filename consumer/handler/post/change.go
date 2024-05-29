@@ -85,7 +85,6 @@ func Change(params params_data.Params)(ResponseChange, error){
 	weight, weightOk := params.Json["weight"].(float64)
 	kcal, kcalOk := params.Json["kcal"].(float64)
 	updateUp, updateUpOk := params.Json["updateUp"].(string)
-	description, descriptionOk := params.Json["description"].(string)
 
 	var updateFields []string
 	if dayOk {
@@ -100,17 +99,14 @@ func Change(params params_data.Params)(ResponseChange, error){
 	if updateUpOk {
 		updateFields = append(updateFields, fmt.Sprintf(`"updateUp"='%s'`, updateUp))
 	}
-	if descriptionOk {
-		updateFields = append(updateFields, fmt.Sprintf(`"description"='%s'`, description))
-	}
-
+	
 	if len(updateFields) == 0 {
 		if err != nil {
 			return ResponseChange{}, err
 		}
 	}
 
-	query := `UPDATE post SET` +  strings.Join(updateFields, ", ") + ` WHERE "id" = $1 AND "userId" = $2 RETURNING "id", "userId", "projectId", "day", "weight", "kcal", "createdUp", "updateUp", "description";`
+	query := `UPDATE post SET` +  strings.Join(updateFields, ", ") + ` WHERE "id" = $1 AND "userId" = $2 RETURNING "id", "userId", "projectId", "day", "weight", "kcal", "createdUp", "updateUp";`
 	rows, err := db.Query(query, &id, &usersData[0].Id)
 	if err != nil {
 		return ResponseChange{}, err
@@ -119,7 +115,7 @@ func Change(params params_data.Params)(ResponseChange, error){
 
 	for rows.Next() {
 		var change change_data.Change
-		if err := rows.Scan(&change.Id, &change.UserId, &change.ProjectId, &change.Day, &change.Weight, &change.Kcal, &change.CreatedUp, &change.UpdateUp, &change.Description); err != nil {
+		if err := rows.Scan(&change.Id, &change.UserId, &change.ProjectId, &change.Day, &change.Weight, &change.Kcal, &change.CreatedUp, &change.UpdateUp); err != nil {
 			return ResponseChange{}, err
 		}
 		changesData = append(changesData, change)

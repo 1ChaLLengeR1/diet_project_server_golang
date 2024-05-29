@@ -101,7 +101,7 @@ func Collection(params params_data.Params)(ResponseCollection, error){
 
 	for rows.Next() {
 		var collection collection_data.Collection
-		if err := rows.Scan(&collection.Id, &collection.UserId, &collection.ProjectId, &collection.Day, &collection.Weight, &collection.Kcal, &collection.CreatedUp, &collection.UpdateUp, &collection.Description); err != nil {
+		if err := rows.Scan(&collection.Id, &collection.UserId, &collection.ProjectId, &collection.Day, &collection.Weight, &collection.Kcal, &collection.CreatedUp, &collection.UpdateUp); err != nil {
 			return ResponseCollection{}, err
 		}
 		collectionsData = append(collectionsData, collection)

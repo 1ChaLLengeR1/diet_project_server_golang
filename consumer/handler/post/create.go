@@ -83,12 +83,11 @@ func Create(params params_data.Params) (ResponseCreate, error){
 	kcal := params.Json["kcal"]
 	now := time.Now()
     formattedDate := now.Format("2006-01-02 15:04:05")
-	description := params.Json["description"]
 
 
-	query := `INSERT INTO post ("userId", "projectId", day, weight, kcal, "createdUp", "updateUp", description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id", "userId", "projectId", "day", "weight", "kcal", "createdUp", "updateUp", "description";`
+	query := `INSERT INTO post ("userId", "projectId", day, weight, kcal, "createdUp", "updateUp") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING "id", "userId", "projectId", "day", "weight", "kcal", "createdUp", "updateUp";`
 
-	rows, err := db.Query(query, usersData[0].Id, projectId, day, weight, kcal, formattedDate, formattedDate, description)
+	rows, err := db.Query(query, usersData[0].Id, projectId, day, weight, kcal, formattedDate, formattedDate)
 	if err != nil {
 		return ResponseCreate{}, err
 	}
@@ -96,7 +95,7 @@ func Create(params params_data.Params) (ResponseCreate, error){
 
 	for rows.Next() {
 		var post post_data.Post
-		if err := rows.Scan(&post.Id, &post.UserId, &post.ProjectId, &post.Day, &post.Weight, &post.Kcal, &post.CreatedUp, &post.UpdateUp, &post.Description); err != nil {
+		if err := rows.Scan(&post.Id, &post.UserId, &post.ProjectId, &post.Day, &post.Weight, &post.Kcal, &post.CreatedUp, &post.UpdateUp); err != nil {
 			return ResponseCreate{}, err
 		}
 		postsData = append(postsData, post)
