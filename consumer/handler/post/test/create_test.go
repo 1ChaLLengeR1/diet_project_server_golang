@@ -15,10 +15,7 @@ func TestCreatePost(t *testing.T) {
 	dataBody := `{
 		"day":1,
 		"weight":88,
-		"kcal":2500,
-		"createdUp":"2024-05-12 10:30:00",
-		"updateUp":"2024-05-12 10:30:00",
-		"description":"desc"
+		"kcal":2500
 	}`
 
 	var createPost post_data.Post

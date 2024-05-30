@@ -80,7 +80,6 @@ func CreateHandler(c * gin.Context){
 	})
 }
 
-
 func Create(params params_data.Params) (ResponseCreate, error){
 	userData := params.Header
 	var usersData []user_data.User

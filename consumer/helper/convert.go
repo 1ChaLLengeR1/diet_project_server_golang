@@ -29,24 +29,3 @@ func UnmarshalJSONToType(jsonStr string, target interface{}) error {
 
 }
 
-func BindStringArrayToMap(array []string) (map[string]interface{}, error) {
-	
-    type Wrapper struct {
-        Items []string `json:"items"`
-    }
-
-    wrapper := Wrapper{Items: array}
-
-    marshaledData, err := json.Marshal(wrapper)
-    if err != nil {
-        return nil, err
-    }
-
-    var jsonMap map[string]interface{}
-    if err := json.Unmarshal(marshaledData, &jsonMap); err != nil {
-        return nil, err
-    }
-
-    return jsonMap, nil
-}
-
