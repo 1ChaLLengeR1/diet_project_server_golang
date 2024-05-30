@@ -3,9 +3,11 @@ package post
 import (
 	params_data "myInternal/consumer/data"
 	post_data "myInternal/consumer/data/post"
+	traning_data "myInternal/consumer/data/training"
 	user_data "myInternal/consumer/data/user"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
+	training_function "myInternal/consumer/handler/training"
 	helpers "myInternal/consumer/helper"
 	"net/http"
 	"time"
@@ -15,6 +17,7 @@ import (
 
 type ResponseCreate struct {
 	Collection []post_data.Post `json:"collection"`
+	CollectionTraining []traning_data.Create
 	Status     int 				`json:"status"`
 	Error      string 			`json:"error"`
 }
@@ -29,6 +32,7 @@ func CreateHandler(c * gin.Context){
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ResponseCreate{
 			Collection: nil,
+			CollectionTraining: nil,
 			Status: http.StatusBadRequest,
 			Error: err.Error(),
 		})
@@ -45,6 +49,23 @@ func CreateHandler(c * gin.Context){
 	if err != nil{
 		c.JSON(http.StatusBadRequest, ResponseCreate{
 			Collection: nil,
+			CollectionTraining: nil,
+			Status: http.StatusBadRequest,
+			Error: err.Error(),
+		})
+		return
+	}
+
+	params = params_data.Params{
+		Param: craete.Collection[0].Id,
+		Json: jsonMap,
+	}
+
+	createTraining, err := training_function.CreateTraining(params)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, ResponseCreate{
+			Collection: nil,
+			CollectionTraining: nil,
 			Status: http.StatusBadRequest,
 			Error: err.Error(),
 		})
@@ -53,6 +74,7 @@ func CreateHandler(c * gin.Context){
 
 	c.JSON(http.StatusOK, ResponseCreate{
 		Collection: craete.Collection,
+		CollectionTraining: createTraining.Collection,
 		Status: craete.Status,
 		Error: craete.Error,
 	})
