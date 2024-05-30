@@ -17,7 +17,7 @@ import (
 
 type ResponseCreate struct {
 	Collection []post_data.Post `json:"collection"`
-	CollectionTraining []traning_data.Create
+	CollectionTraining []traning_data.Create `json:"collectionTraining"`
 	Status     int 				`json:"status"`
 	Error      string 			`json:"error"`
 }

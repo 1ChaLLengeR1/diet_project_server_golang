@@ -3,17 +3,20 @@ package post
 import (
 	"database/sql"
 	params_data "myInternal/consumer/data"
-	collection_data "myInternal/consumer/data/post"
+	post_data "myInternal/consumer/data/post"
+	training_data "myInternal/consumer/data/training"
 	user_data "myInternal/consumer/data/user"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
+	training_function "myInternal/consumer/handler/training"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type ResponseCollectionOne struct{
-	Collection []collection_data.Collection `json:"collection"`
+	Collection []post_data.Collection `json:"collection"`
+	CollectionTraining []training_data.Collection `json:"collectionTraining"`
 	Status     int							`json:"status"`
 	Error      string 						`json:"error"`
 }
@@ -30,14 +33,32 @@ func HandlerCollectionOne(c *gin.Context){
 	if err != nil{
 		c.JSON(http.StatusBadRequest, ResponseCollectionOne{
 			Collection: nil,
+			CollectionTraining: nil,
 			Status: http.StatusBadRequest,
 			Error: err.Error(),
 		})
 		return
 	}
 
+	params = params_data.Params{
+		Param: collectionOne.Collection[0].Id,
+	}
+
+	collectionOneTraining, err := training_function.CollectionOneTraining(params)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, ResponseCollectionOne{
+			Collection: nil,
+			CollectionTraining: nil,
+			Status: http.StatusBadRequest,
+			Error: err.Error(),
+		})
+		return
+	}
+
+
 	c.JSON(http.StatusOK, ResponseCollectionOne{
 		Collection: collectionOne.Collection,
+		CollectionTraining: collectionOneTraining.Collection,
 		Status: collectionOne.Status,
 		Error: collectionOne.Error,
 	})
@@ -48,7 +69,7 @@ func CollectionOne(params params_data.Params)(ResponseCollectionOne, error){
 	queryParam := params.Query
 
 	var usersData []user_data.User
-	var collectionOneData []collection_data.Collection
+	var collectionOneData []post_data.Collection
 	var query string
 
 
@@ -85,7 +106,7 @@ func CollectionOne(params params_data.Params)(ResponseCollectionOne, error){
 	defer rows.Close()
 
 	for rows.Next() {
-		var collection collection_data.Collection
+		var collection post_data.Collection
 		if err := rows.Scan(&collection.Id, &collection.UserId, &collection.ProjectId, &collection.Day, &collection.Weight, &collection.Kcal, &collection.CreatedUp, &collection.UpdateUp); err != nil {
 			return ResponseCollectionOne{}, err
 		}
@@ -94,6 +115,7 @@ func CollectionOne(params params_data.Params)(ResponseCollectionOne, error){
 
 	return ResponseCollectionOne{
 		Collection: collectionOneData,
+		CollectionTraining: nil,
 		Status: http.StatusOK,
 		Error: "",
 	}, nil
