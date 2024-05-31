@@ -63,7 +63,7 @@ func Delete(params params_data.Params)(ResponseDelete, error){
 
 	id := params.Param
 
-	query := `DELETE FROM post WHERE "id" = $1 AND "userId" = $2 RETURNING "id", "userId", "projectId", "day", "weight", "kcal", "createdUp", "updateUp", "description";`
+	query := `DELETE FROM post WHERE "id" = $1 AND "userId" = $2 RETURNING "id", "userId", "projectId", "day", "weight", "kcal", "createdUp", "updateUp";`
 	rows, err := db.Query(query, &id, &usersData[0].Id)
 	if err != nil {
 		return ResponseDelete{}, err
@@ -72,7 +72,7 @@ func Delete(params params_data.Params)(ResponseDelete, error){
 
 	for rows.Next() {
 		var delete delete_data.Delete
-		if err := rows.Scan(&delete.Id, &delete.UserId, &delete.ProjectId, &delete.Day, &delete.Weight, &delete.Kcal, &delete.CreatedUp, &delete.UpdateUp, &delete.Description); err != nil {
+		if err := rows.Scan(&delete.Id, &delete.UserId, &delete.ProjectId, &delete.Day, &delete.Weight, &delete.Kcal, &delete.CreatedUp, &delete.UpdateUp); err != nil {
 			return ResponseDelete{}, err
 		}
 		deletesData = append(deletesData, delete)

@@ -3,9 +3,11 @@ package post
 import (
 	params_data "myInternal/consumer/data"
 	post_data "myInternal/consumer/data/post"
+	training_data "myInternal/consumer/data/training"
 	user_data "myInternal/consumer/data/user"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
+	training_function "myInternal/consumer/handler/training"
 	helpers "myInternal/consumer/helper"
 	"net/http"
 	"time"
@@ -15,10 +17,10 @@ import (
 
 type ResponseCreate struct {
 	Collection []post_data.Post `json:"collection"`
+	CollectionTraining []training_data.Create `json:"collectionTraining"`
 	Status     int 				`json:"status"`
 	Error      string 			`json:"error"`
 }
-
 
 func CreateHandler(c * gin.Context){
 
@@ -29,6 +31,7 @@ func CreateHandler(c * gin.Context){
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ResponseCreate{
 			Collection: nil,
+			CollectionTraining: nil,
 			Status: http.StatusBadRequest,
 			Error: err.Error(),
 		})
@@ -45,6 +48,23 @@ func CreateHandler(c * gin.Context){
 	if err != nil{
 		c.JSON(http.StatusBadRequest, ResponseCreate{
 			Collection: nil,
+			CollectionTraining: nil,
+			Status: http.StatusBadRequest,
+			Error: err.Error(),
+		})
+		return
+	}
+
+	params = params_data.Params{
+		Param: craete.Collection[0].Id,
+		Json: jsonMap,
+	}
+
+	createTraining, err := training_function.CreateTraining(params)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, ResponseCreate{
+			Collection: nil,
+			CollectionTraining: nil,
 			Status: http.StatusBadRequest,
 			Error: err.Error(),
 		})
@@ -53,11 +73,11 @@ func CreateHandler(c * gin.Context){
 
 	c.JSON(http.StatusOK, ResponseCreate{
 		Collection: craete.Collection,
+		CollectionTraining: createTraining.Collection,
 		Status: craete.Status,
 		Error: craete.Error,
 	})
 }
-
 
 func Create(params params_data.Params) (ResponseCreate, error){
 	userData := params.Header
@@ -83,12 +103,11 @@ func Create(params params_data.Params) (ResponseCreate, error){
 	kcal := params.Json["kcal"]
 	now := time.Now()
     formattedDate := now.Format("2006-01-02 15:04:05")
-	description := params.Json["description"]
 
 
-	query := `INSERT INTO post ("userId", "projectId", day, weight, kcal, "createdUp", "updateUp", description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING "id", "userId", "projectId", "day", "weight", "kcal", "createdUp", "updateUp", "description";`
+	query := `INSERT INTO post ("userId", "projectId", day, weight, kcal, "createdUp", "updateUp") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING "id", "userId", "projectId", "day", "weight", "kcal", "createdUp", "updateUp";`
 
-	rows, err := db.Query(query, usersData[0].Id, projectId, day, weight, kcal, formattedDate, formattedDate, description)
+	rows, err := db.Query(query, usersData[0].Id, projectId, day, weight, kcal, formattedDate, formattedDate)
 	if err != nil {
 		return ResponseCreate{}, err
 	}
@@ -96,7 +115,7 @@ func Create(params params_data.Params) (ResponseCreate, error){
 
 	for rows.Next() {
 		var post post_data.Post
-		if err := rows.Scan(&post.Id, &post.UserId, &post.ProjectId, &post.Day, &post.Weight, &post.Kcal, &post.CreatedUp, &post.UpdateUp, &post.Description); err != nil {
+		if err := rows.Scan(&post.Id, &post.UserId, &post.ProjectId, &post.Day, &post.Weight, &post.Kcal, &post.CreatedUp, &post.UpdateUp); err != nil {
 			return ResponseCreate{}, err
 		}
 		postsData = append(postsData, post)

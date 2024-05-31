@@ -6,6 +6,7 @@ import (
 	file_handler "myInternal/consumer/handler/file"
 	post_handler "myInternal/consumer/handler/post"
 	project_handler "myInternal/consumer/handler/project"
+	training_handler "myInternal/consumer/handler/training"
 	user_handler "myInternal/consumer/handler/user"
 	"myInternal/consumer/middleware"
 	"net/http"
@@ -58,6 +59,13 @@ func loadRouters() *gin.Engine {
 		dictionaryGroup.GET("/collection", dictionary_handler.HandlerCollectionDictionary)
 	}
 
+	// training routers
+	trainingGroup := router.Group("/api/training")
+	{
+		trainingGroup.DELETE("/delete/:postId", middleware.EnsureValidToken(), training_handler.HandlerDeleteTraining)
+		trainingGroup.POST("/create/:postId", middleware.EnsureValidToken(), training_handler.HandlerCreateTraining)
+	}
+
 	// auth jwt
 	authHander := &auth_handler.Auth{}
 	authGroup := router.Group("/api/auth", middleware.EnsureValidToken())
@@ -73,11 +81,3 @@ func loadRouters() *gin.Engine {
 
 	return router
 }
-
-
-
-
- 
-
-
-
