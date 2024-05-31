@@ -3,7 +3,7 @@ package post
 import (
 	params_data "myInternal/consumer/data"
 	post_data "myInternal/consumer/data/post"
-	traning_data "myInternal/consumer/data/training"
+	training_data "myInternal/consumer/data/training"
 	user_data "myInternal/consumer/data/user"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
@@ -17,11 +17,10 @@ import (
 
 type ResponseCreate struct {
 	Collection []post_data.Post `json:"collection"`
-	CollectionTraining []traning_data.Create `json:"collectionTraining"`
+	CollectionTraining []training_data.Create `json:"collectionTraining"`
 	Status     int 				`json:"status"`
 	Error      string 			`json:"error"`
 }
-
 
 func CreateHandler(c * gin.Context){
 
