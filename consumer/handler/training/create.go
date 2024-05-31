@@ -4,8 +4,11 @@ import (
 	params_data "myInternal/consumer/data"
 	training_data "myInternal/consumer/data/training"
 	database "myInternal/consumer/database"
+	helpers "myInternal/consumer/helper"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type ResponseCreateTraining struct {
@@ -13,6 +16,44 @@ type ResponseCreateTraining struct {
 	Status     int                   `json:"status"`
 	Error      string                `json:"error"`
 }
+
+func responseCreateStatus(c *gin.Context, col []training_data.Create, status int, err error) {
+	response := ResponseCreateTraining{
+		Collection:         col,
+		Status:             status,
+	}
+	
+	if err != nil {
+		response.Error = err.Error()
+	}
+	
+	c.JSON(status, response)
+}
+
+func HandlerCreateTraining(c *gin.Context){
+
+	var createTraining training_data.CollectionTraining
+	c.BindJSON(&createTraining)
+	jsonMap, err := helpers.BindJSONToMap(&createTraining)
+	if err != nil {
+		responseCreateStatus(c, nil, http.StatusBadRequest, err)
+		return
+	}
+
+	params := params_data.Params{
+		Param: c.Param("postId"),
+		Json: jsonMap,
+	}
+
+	createTrainingF, err := CreateTraining(params)
+	if err != nil{
+		responseCreateStatus(c, nil, http.StatusBadRequest, err)
+		return
+	}
+
+	responseCreateStatus(c, createTrainingF.Collection, createTrainingF.Status, nil)
+}
+
 
 func CreateTraining(params params_data.Params)(ResponseCreateTraining, error){
 	postId := params.Param

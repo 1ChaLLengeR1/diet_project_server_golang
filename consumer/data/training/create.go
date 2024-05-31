@@ -10,6 +10,10 @@ type Create struct {
 	UpdateUp  string `json:"updateUp"`
 }
 
+type CollectionTraining struct {
+	TrainingCollection []OneTraining `json:"trainingCollection"`
+}
+
 type OneTraining struct {
 	Id   string `json:"id"`
 	Type string `json:"type"`

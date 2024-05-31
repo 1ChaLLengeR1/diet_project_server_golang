@@ -63,6 +63,7 @@ func loadRouters() *gin.Engine {
 	trainingGroup := router.Group("/api/training")
 	{
 		trainingGroup.DELETE("/delete/:postId", middleware.EnsureValidToken(), training_handler.HandlerDeleteTraining)
+		trainingGroup.POST("/create/:postId", middleware.EnsureValidToken(), training_handler.HandlerCreateTraining)
 	}
 
 	// auth jwt

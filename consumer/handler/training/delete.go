@@ -19,7 +19,7 @@ type ResponseDeleteTraining struct {
 	Error      string                `json:"error"`
 }
 
-func responseStatus(c *gin.Context, col []training_data.Delete, status int, err error) {
+func responseDeleteStatus(c *gin.Context, col []training_data.Delete, status int, err error) {
 	response := ResponseDeleteTraining{
 		Collection:         col,
 		Status:             status,
@@ -37,7 +37,7 @@ func HandlerDeleteTraining(c *gin.Context){
 	c.BindJSON(&removeIds)
 	jsonMap, err := helpers.BindJSONToMap(&removeIds)
 	if err != nil {
-		responseStatus(c, nil, http.StatusBadRequest, err)
+		responseDeleteStatus(c, nil, http.StatusBadRequest, err)
 		return
 	}
 
@@ -49,11 +49,11 @@ func HandlerDeleteTraining(c *gin.Context){
 
 	deleteTraining, err := DeleteTraining(params)
 	if err != nil{
-		responseStatus(c, nil, http.StatusBadRequest, err)
+		responseDeleteStatus(c, nil, http.StatusBadRequest, err)
 		return
 	}
 
-	responseStatus(c, deleteTraining.Collection, deleteTraining.Status, nil)
+	responseDeleteStatus(c, deleteTraining.Collection, deleteTraining.Status, nil)
 }
 
 func DeleteTraining(params params_data.Params)(ResponseDeleteTraining, error){
