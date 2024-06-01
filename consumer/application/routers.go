@@ -7,6 +7,7 @@ import (
 	post_handler "myInternal/consumer/handler/post"
 	project_handler "myInternal/consumer/handler/project"
 	training_handler "myInternal/consumer/handler/training"
+	typeTraining_handler "myInternal/consumer/handler/typeTraining"
 	user_handler "myInternal/consumer/handler/user"
 	"myInternal/consumer/middleware"
 	"net/http"
@@ -64,6 +65,12 @@ func loadRouters() *gin.Engine {
 	{
 		trainingGroup.DELETE("/delete/:postId", middleware.EnsureValidToken(), training_handler.HandlerDeleteTraining)
 		trainingGroup.POST("/create/:postId", middleware.EnsureValidToken(), training_handler.HandlerCreateTraining)
+	}
+
+	// typeTraining routers
+	typeTrainingGroup := router.Group("/api/typeTraining")
+	{
+		typeTrainingGroup.POST("/create", middleware.EnsureValidToken(), typeTraining_handler.HandlerCreateTypeTraining)
 	}
 
 	// auth jwt
