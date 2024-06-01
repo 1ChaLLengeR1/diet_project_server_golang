@@ -83,7 +83,6 @@ func CreateTypeTraining(params params_data.Params)(ResponseCreateTypeTraning, er
     formattedDate := now.Format("2006-01-02 15:04:05")
 
 	query := `INSERT INTO type_training ("name", "userId", "createdUp") VALUES ($1, $2, $3) RETURNING "id", "userId", "name", "createdUp";`
-
 	rows, err := db.Query(query, name, usersData[0].Id, formattedDate)
 	if err != nil {
 		return ResponseCreateTypeTraning{}, err

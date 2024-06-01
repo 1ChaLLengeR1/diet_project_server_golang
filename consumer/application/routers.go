@@ -72,6 +72,7 @@ func loadRouters() *gin.Engine {
 	{
 		typeTrainingGroup.POST("/create", middleware.EnsureValidToken(), typeTraining_handler.HandlerCreateTypeTraining)
 		typeTrainingGroup.GET("/collection", middleware.EnsureValidToken(), typeTraining_handler.HandlerCollectionTypeTraining)
+		typeTrainingGroup.DELETE("/delete/:id", middleware.EnsureValidToken(), typeTraining_handler.HandlerDeleteTypeTraining)
 	}
 
 	// auth jwt
