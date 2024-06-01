@@ -71,6 +71,7 @@ func loadRouters() *gin.Engine {
 	typeTrainingGroup := router.Group("/api/typeTraining")
 	{
 		typeTrainingGroup.POST("/create", middleware.EnsureValidToken(), typeTraining_handler.HandlerCreateTypeTraining)
+		typeTrainingGroup.GET("/collection", middleware.EnsureValidToken(), typeTraining_handler.HandlerCollectionTypeTraining)
 	}
 
 	// auth jwt

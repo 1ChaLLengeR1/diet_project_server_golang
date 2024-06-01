@@ -14,14 +14,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ResponseTypeTraning struct{
+type ResponseCreateTypeTraning struct{
 	Collection []trainingType_data.Create `json:"collection"`
 	Status     int                   `json:"status"`
 	Error      string                `json:"error"`
 }
 
-func responseTypeTraning(c *gin.Context, col []trainingType_data.Create, status int, err error){
-	response := ResponseTypeTraning{
+func responseCreateTypeTraning(c *gin.Context, col []trainingType_data.Create, status int, err error){
+	response := ResponseCreateTypeTraning{
 		Collection:         col,
 		Status:             status,
 	}
@@ -39,7 +39,7 @@ func HandlerCreateTypeTraining(c *gin.Context){
 
 	jsonMap, err := helpers.BindJSONToMap(&typeTraning)
 	if err != nil {
-		responseTypeTraning(c, nil, http.StatusBadRequest, err)
+		responseCreateTypeTraning(c, nil, http.StatusBadRequest, err)
 		return
 	}
 
@@ -50,14 +50,14 @@ func HandlerCreateTypeTraining(c *gin.Context){
 
 	createTypeTraining, err := CreateTypeTraining(params)
 	if err != nil{
-		responseTypeTraning(c, nil, http.StatusBadRequest, err)
+		responseCreateTypeTraning(c, nil, http.StatusBadRequest, err)
 		return
 	}
 
-	responseTypeTraning(c, createTypeTraining.Collection, createTypeTraining.Status, nil)
+	responseCreateTypeTraning(c, createTypeTraining.Collection, createTypeTraining.Status, nil)
 }
 
-func CreateTypeTraining(params params_data.Params)(ResponseTypeTraning, error){
+func CreateTypeTraining(params params_data.Params)(ResponseCreateTypeTraning, error){
 
 	userData := params.Header
 	var typeTrainingCollection []trainingType_data.Create
@@ -65,19 +65,19 @@ func CreateTypeTraining(params params_data.Params)(ResponseTypeTraning, error){
 
 	db, err := database.ConnectToDataBase()
 	if err != nil{
-		return ResponseTypeTraning{}, err
+		return ResponseCreateTypeTraning{}, err
 	}
 
 	_, users,  err := auth.CheckUser(userData)
 	if err != nil{
-		return ResponseTypeTraning{}, err
+		return ResponseCreateTypeTraning{}, err
 	}
 
 	usersData = users
 
 	name := params.Json["name"].(string) 
 	if name == "" {
-		return ResponseTypeTraning{}, fmt.Errorf("json name is error: key 'name' is either missing or not a string")
+		return ResponseCreateTypeTraning{}, fmt.Errorf("json name is error: key 'name' is either missing or not a string")
 	}
 	now := time.Now()
     formattedDate := now.Format("2006-01-02 15:04:05")
@@ -86,19 +86,19 @@ func CreateTypeTraining(params params_data.Params)(ResponseTypeTraning, error){
 
 	rows, err := db.Query(query, name, usersData[0].Id, formattedDate)
 	if err != nil {
-		return ResponseTypeTraning{}, err
+		return ResponseCreateTypeTraning{}, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var typeTraning trainingType_data.Create
 		if err := rows.Scan(&typeTraning.Id, &typeTraning.UserId, &typeTraning.Name, &typeTraning.CreatedUp); err != nil {
-			return ResponseTypeTraning{}, err
+			return ResponseCreateTypeTraning{}, err
 		}
 		typeTrainingCollection = append(typeTrainingCollection, typeTraning)
 	}
 
-	return ResponseTypeTraning{
+	return ResponseCreateTypeTraning{
 		Collection: typeTrainingCollection,
 		Status: http.StatusOK,
 		Error: "",
