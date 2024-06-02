@@ -14,3 +14,17 @@ type Create struct {
 	CreatedUp    string  `json:"createdUp"`
 	UpdateUp     string  `json:"updateUp"`
 }
+
+type OneTraining struct {
+	PostId string `json:"postId"`
+	Type   string `json:"type"`
+	Time   string `json:"time"`
+	Kcal   int64  `json:"kcal"`
+}
+
+type Statistics struct {
+	Day                int64         `json:"day"`
+	Weight             float64       `json:"weight"`
+	Kcal               int64         `json:"kcal"`
+	TrainingCollection []OneTraining `json:"trainingCollection"`
+}
