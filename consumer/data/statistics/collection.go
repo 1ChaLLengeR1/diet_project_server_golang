@@ -1,9 +1,8 @@
 package statistics
 
 type Collection struct {
-	ID           string  `json:"id"`
-	ProjectID    string  `json:"projectId"`
-	Day          string  `json:"day"`
+	Week         int     `json:"week"`
+	StartWeight  float64 `json:"startWeight"`
 	EndWeight    float64 `json:"endWeight"`
 	DownWeight   float64 `json:"downWeight"`
 	SumKg        float64 `json:"sumKg"`

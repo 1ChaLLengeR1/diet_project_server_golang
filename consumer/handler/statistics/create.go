@@ -12,12 +12,12 @@ import (
 )
 
 type ResponseCreateStatistics struct {
-	Info   string `json:"info"`
+	Statistics   []statistics_data.Statistics `json:"statistics"`
 	Status int    `json:"status"`
 	Error  string `json:"error"`
 }
 
-func CreateStatistics(params params_data.Params)(ResponseCreateStatistics, error){
+func CreateStatisticOption(params params_data.Params)(ResponseCreateStatistics, error){
 
 	userData := params.Header
 	projectId := params.Param
@@ -85,11 +85,10 @@ func CreateStatistics(params params_data.Params)(ResponseCreateStatistics, error
 		statisticsCollection = append(statisticsCollection, statistics)
 		trainingCollection = trainingCollection[:0]
 	}
-	
+
 	return ResponseCreateStatistics{
-		Info: "Create statistics",
+		Statistics: statisticsCollection,
 		Status: http.StatusOK,
 		Error: "",
 	}, nil
 }
-
