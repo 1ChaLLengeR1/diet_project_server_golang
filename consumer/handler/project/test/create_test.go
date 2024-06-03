@@ -17,9 +17,7 @@ func TestCreateProject(t *testing.T) {
 
 	dataBody := `{
 		"title":"test title",
-		"description":"desc test",
-		"createdUp":"2024-05-12 10:30:00",
-		"updateUp":"2024-05-12 10:30:00"
+		"description":"desc test"
 	}`
 
 	var createProject project_data.Create
@@ -39,7 +37,7 @@ func TestCreateProject(t *testing.T) {
 	env.LoadEnv("./.env")
 	_, err = project_function.CreateProject(params)
 	if err != nil {
-		t.Fatalf("Error create function: %v", err)
+		t.Fatalf("Error create project function: %v", err)
 	}
 }
 

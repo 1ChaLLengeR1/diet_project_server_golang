@@ -83,7 +83,7 @@ func CreateStatisticOption(params params_data.Params)(ResponseCreateStatistics, 
 		}
 
 		statisticsCollection = append(statisticsCollection, statistics)
-		trainingCollection = trainingCollection[:0]
+		trainingCollection = []statistics_data.OneTraining{}
 	}
 
 	return ResponseCreateStatistics{
