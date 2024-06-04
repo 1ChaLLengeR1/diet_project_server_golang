@@ -26,7 +26,7 @@ func TestCollectionAll(t *testing.T) {
 	var createPost post_data.Post
 	err = helpers.UnmarshalJSONToType(dataBody, &createPost)
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 
 	jsonMap, _ := helpers.BindJSONToMap(&createPost)
@@ -42,7 +42,7 @@ func TestCollectionAll(t *testing.T) {
 	for i := 0; i < 3; i++ {
 		_, err := post_function.Create(params)
 		if err != nil {
-			t.Fatalf("Error in create function: %v", err)
+			t.Fatalf("error in create function: %v", err)
 		}
 	}
 
@@ -54,11 +54,11 @@ func TestCollectionAll(t *testing.T) {
 
 	valueCollection, err := post_function.Collection(params)
 	if err != nil {
-		t.Fatalf("Error in collection function: %v", err)
+		t.Fatalf("error in collection function: %v", err)
 	}
 
 	if(len(valueCollection.Collection) < 3){
-		t.Fatalf("Error in len collection > 3")
+		t.Fatalf("error in len collection > 3")
 	}
 }
 
@@ -79,7 +79,7 @@ func TestCollectionOne(t *testing.T){
 	var createPost post_data.Post
 	err = helpers.UnmarshalJSONToType(dataBody, &createPost)
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 
 	jsonMap, _ := helpers.BindJSONToMap(&createPost)
@@ -93,7 +93,7 @@ func TestCollectionOne(t *testing.T){
 	env.LoadEnv("./.env")
 	valueCreate, err := post_function.Create(params)
 	if err != nil {
-			t.Fatalf("Error in create function: %v", err)
+			t.Fatalf("error in create function: %v", err)
 	}
 
 	params = params_data.Params{
@@ -104,7 +104,7 @@ func TestCollectionOne(t *testing.T){
 
 	_, err = post_function.CollectionOne(params)
 	if err != nil {
-		t.Fatalf("Error in create function: %v", err)
+		t.Fatalf("error in create function: %v", err)
 	}
 
 }

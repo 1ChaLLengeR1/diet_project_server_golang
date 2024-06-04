@@ -9,3 +9,9 @@ type Collection struct {
 	CreatedUp string `json:"createdUp"`
 	UpdateUp  string `json:"updateUp"`
 }
+
+type Statistics struct {
+	Type string `json:"type"`
+	Time string `json:"time"`
+	Kcal int64  `json:"kcal"`
+}

@@ -66,7 +66,7 @@ func TestDeleteAll(t *testing.T){
 	var createProject project_data.Create
 	err := helpers.UnmarshalJSONToType(dataBody, &createProject); 
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 	jsonMap, _ := helpers.BindJSONToMap(&createProject)
 
@@ -80,7 +80,7 @@ func TestDeleteAll(t *testing.T){
 	env.LoadEnv("./.env")
 	project, err := project_function.CreateProject(params)
 	if err != nil {
-		t.Fatalf("Error create function: %v", err)
+		t.Fatalf("error create function: %v", err)
 	}
 
 	// post function
@@ -94,7 +94,7 @@ func TestDeleteAll(t *testing.T){
 	var createPost post_data.Post
 	err = helpers.UnmarshalJSONToType(dataBody, &createPost); 
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 	jsonMap, _ = helpers.BindJSONToMap(&createPost)
 
@@ -106,7 +106,7 @@ func TestDeleteAll(t *testing.T){
 
 	_, err = post_function.Create(params)
 	if err != nil {
-		t.Fatalf("Error create function: %v", err)
+		t.Fatalf("error create function: %v", err)
 	}
 
 	// file function
@@ -145,7 +145,7 @@ func TestDeleteAll(t *testing.T){
 	// delete project
 	deleteProject, err := project_function.DeleteProject(params)
 	if err != nil {
-		t.Fatalf("Error delete project function: %v", err)
+		t.Fatalf("error delete project function: %v", err)
 	}
 	
 	removeIds := file_data.RemoveId{
@@ -161,6 +161,6 @@ func TestDeleteAll(t *testing.T){
 
 	_, err = file_function.DeleteFileAll(params)
 	if err != nil {
-		t.Fatalf("Error deleteAll file function: %v", err)
+		t.Fatalf("error deleteAll file function: %v", err)
 	}
 }

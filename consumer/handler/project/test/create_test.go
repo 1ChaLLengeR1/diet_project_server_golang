@@ -17,15 +17,13 @@ func TestCreateProject(t *testing.T) {
 
 	dataBody := `{
 		"title":"test title",
-		"description":"desc test",
-		"createdUp":"2024-05-12 10:30:00",
-		"updateUp":"2024-05-12 10:30:00"
+		"description":"desc test"
 	}`
 
 	var createProject project_data.Create
 	err := helpers.UnmarshalJSONToType(dataBody, &createProject); 
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 	jsonMap, _ := helpers.BindJSONToMap(&createProject)
 
@@ -39,7 +37,7 @@ func TestCreateProject(t *testing.T) {
 	env.LoadEnv("./.env")
 	_, err = project_function.CreateProject(params)
 	if err != nil {
-		t.Fatalf("Error create function: %v", err)
+		t.Fatalf("error create project function: %v", err)
 	}
 }
 
@@ -56,7 +54,7 @@ func TestCreateFullProject(t *testing.T) {
 	var createProject project_data.Create
 	err := helpers.UnmarshalJSONToType(dataBody, &createProject); 
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 	jsonMap, _ := helpers.BindJSONToMap(&createProject)
 
@@ -70,7 +68,7 @@ func TestCreateFullProject(t *testing.T) {
 	env.LoadEnv("./.env")
 	project, err := project_function.CreateProject(params)
 	if err != nil {
-		t.Fatalf("Error create function: %v", err)
+		t.Fatalf("error create function: %v", err)
 	}
 
 	formData := make(map[string][]*multipart.FileHeader)

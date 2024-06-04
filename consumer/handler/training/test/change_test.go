@@ -22,7 +22,7 @@ func TestChangeTraning(t *testing.T){
 	var createPost post_data.Post
 	err := helpers.UnmarshalJSONToType(dataBody, &createPost); 
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 
 	jsonMap, _ := helpers.BindJSONToMap(&createPost)
@@ -36,7 +36,7 @@ func TestChangeTraning(t *testing.T){
 	env.LoadEnv("./.env")
 	postCreate, err := post_function.Create(params)
 	if err != nil {
-		t.Fatalf("Error create post function: %v", err)
+		t.Fatalf("error create post function: %v", err)
 	}
 
 	trainingCollection := `
@@ -64,12 +64,12 @@ func TestChangeTraning(t *testing.T){
 	var trainingCollectionMap map[string]interface{}
 	err = helpers.UnmarshalJSONToType(trainingCollection, &trainingCollectionMap)
 	if err != nil {
-		t.Fatalf("Error unmarshalling trainingCollection: %v", err)
+		t.Fatalf("error unmarshalling trainingCollection: %v", err)
 	}
 	
 	jsonMap, err = helpers.BindJSONToMap(&trainingCollectionMap)
 	if err != nil {
-		t.Fatalf("Error binding JSON to map array: %v", err)
+		t.Fatalf("error binding JSON to map array: %v", err)
 	}
 
 	params = params_data.Params{
@@ -79,7 +79,7 @@ func TestChangeTraning(t *testing.T){
 
 	createTraining, err := training_function.CreateTraining(params)
 	if err != nil {
-		t.Fatalf("Error create training function: %v", err)
+		t.Fatalf("error create training function: %v", err)
 	}
 
 	trainingChange := fmt.Sprintf(`
@@ -110,12 +110,12 @@ func TestChangeTraning(t *testing.T){
 	var trainingChangeMap map[string]interface{}
 	err = helpers.UnmarshalJSONToType(trainingChange, &trainingChangeMap)
 	if err != nil {
-		t.Fatalf("Error unmarshalling trainingChange: %v", err)
+		t.Fatalf("error unmarshalling trainingChange: %v", err)
 	}
 	
 	jsonMap, err = helpers.BindJSONToMap(&trainingChangeMap)
 	if err != nil {
-		t.Fatalf("Error binding JSON to map array: %v", err)
+		t.Fatalf("error binding JSON to map array: %v", err)
 	}
 
 	params = params_data.Params{
@@ -125,6 +125,6 @@ func TestChangeTraning(t *testing.T){
 
 	_, err = training_function.ChangeTraining(params)
 	if err != nil {
-		t.Fatalf("Error change training function: %v", err)
+		t.Fatalf("error change training function: %v", err)
 	}
 }

@@ -26,7 +26,7 @@ func TestDelete(t *testing.T) {
 	var createPost post_data.Post
 	err = helpers.UnmarshalJSONToType(dataBody, &createPost)
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 
 	jsonMap, _ := helpers.BindJSONToMap(&createPost)
@@ -40,7 +40,7 @@ func TestDelete(t *testing.T) {
 	env.LoadEnv("./.env")
 	valueCreate, err := post_function.Create(params)
 	if err != nil {
-		t.Fatalf("Error create function: %v", err)
+		t.Fatalf("error create function: %v", err)
 	}
 
 	params = params_data.Params{
@@ -51,6 +51,6 @@ func TestDelete(t *testing.T) {
 
 	_, err = post_function.Delete(params)
 	if err != nil {
-		t.Fatalf("Error delete function: %v", err)
+		t.Fatalf("error delete function: %v", err)
 	}
 }

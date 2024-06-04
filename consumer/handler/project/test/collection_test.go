@@ -35,7 +35,7 @@ func TestCollectionProject(t *testing.T) {
 	env.LoadEnv("./.env")
 	_, err = project_function.CreateProject(params)
 	if err != nil {
-		t.Fatalf("Error create function: %v", err)
+		t.Fatalf("error create function: %v", err)
 	}
 
 	params = params_data.Params{
@@ -47,11 +47,11 @@ func TestCollectionProject(t *testing.T) {
 
 	projectCollection, err := project_function.CollectionProject(params)
 	if err != nil {
-		t.Fatalf("Error collection function: %v", err)
+		t.Fatalf("error collection function: %v", err)
 	}
 
 	if(len(projectCollection.Collection) == 0){
-		t.Fatalf("Error in len collection == 0")
+		t.Fatalf("error in len collection == 0")
 	}
 }
 
@@ -66,7 +66,7 @@ func TestCollectionOne(t *testing.T){
 	var createProject project_data.Create
 	err := helpers.UnmarshalJSONToType(dataBody, &createProject); 
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 	jsonMap, _ := helpers.BindJSONToMap(&createProject)
 
@@ -80,7 +80,7 @@ func TestCollectionOne(t *testing.T){
 	env.LoadEnv("./.env")
 	project, err := project_function.CreateProject(params)
 	if err != nil {
-		t.Fatalf("Error create function: %v", err)
+		t.Fatalf("error create function: %v", err)
 	}
 
 	params = params_data.Params{
@@ -92,10 +92,10 @@ func TestCollectionOne(t *testing.T){
 
 	projectCollection, err := project_function.CollectionOneProject(params)
 	if err != nil {
-		t.Fatalf("Error collection one function: %v", err)
+		t.Fatalf("error collection one function: %v", err)
 	}
 
 	if(len(projectCollection.Collection) == 0){
-		t.Fatalf("Error in len collection one == 0")
+		t.Fatalf("error in len collection one == 0")
 	}
 }

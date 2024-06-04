@@ -21,7 +21,7 @@ func TestChangeProject(t *testing.T) {
 	var createProject project_data.Create
 	err := helpers.UnmarshalJSONToType(dataBody, &createProject)
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 	jsonMap, _ := helpers.BindJSONToMap(&createProject)
 
@@ -35,7 +35,7 @@ func TestChangeProject(t *testing.T) {
 	env.LoadEnv("./.env")
 	project, err := project_function.CreateProject(params)
 	if err != nil {
-		t.Fatalf("Error create function: %v", err)
+		t.Fatalf("error create function: %v", err)
 	}
 
 	dataBody = `{
@@ -47,7 +47,7 @@ func TestChangeProject(t *testing.T) {
 	var changeProject project_data.Create
 	err = helpers.UnmarshalJSONToType(dataBody, &changeProject)
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 	jsonMap, _ = helpers.BindJSONToMap(&changeProject)
 
@@ -60,6 +60,6 @@ func TestChangeProject(t *testing.T) {
 
 	_, err = project_function.ChangeProject(params)
 	if err != nil{
-		t.Fatalf("Error change project function: %v", err)
+		t.Fatalf("error change project function: %v", err)
 	}
 }

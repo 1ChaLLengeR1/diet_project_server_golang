@@ -18,7 +18,7 @@ func TestDeleteTypeTraining(t *testing.T) {
 	var createTypeTraining typeTraining_data.Create
 	err := helpers.UnmarshalJSONToType(dataBody, &createTypeTraining); 
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 
 	jsonMap, _ := helpers.BindJSONToMap(&createTypeTraining)
@@ -31,7 +31,7 @@ func TestDeleteTypeTraining(t *testing.T) {
 	env.LoadEnv("./.env")
 	typeTrainingCreate, err := typeTraining_function.CreateTypeTraining(params)
 	if err != nil {
-		t.Fatalf("Error create typeTraining function: %v", err)
+		t.Fatalf("error create typeTraining function: %v", err)
 	}
 
 	params = params_data.Params{
@@ -41,10 +41,10 @@ func TestDeleteTypeTraining(t *testing.T) {
 
 	typeTrainingDelete, err := typeTraining_function.DeleteTypeTraining(params)
 	if err != nil {
-		t.Fatalf("Error delete typeTraining function: %v", err)
+		t.Fatalf("error delete typeTraining function: %v", err)
 	}
 
 	if len(typeTrainingDelete.Collection) != 1{
-		t.Fatalf("Error collection from typeTraining function delete is not 1")
+		t.Fatalf("error collection from typeTraining function delete is not 1")
 	}
 }

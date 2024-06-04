@@ -1,40 +1,37 @@
 package test
 
 import (
+	"fmt"
 	common_test "myInternal/consumer/common"
 	params_data "myInternal/consumer/data"
 	post_data "myInternal/consumer/data/post"
 	post_function "myInternal/consumer/handler/post"
 	helpers "myInternal/consumer/helper"
 	env "myInternal/consumer/initializers"
-	"testing"
 )
 
-func TestCreatePost(t *testing.T) {
-
-	dataBody := `{
-		"day":1,
-		"weight":88,
-		"kcal":2500
-	}`
+func CreatePost(body string, id string)(string, error){
 
 	var createPost post_data.Post
-	err := helpers.UnmarshalJSONToType(dataBody, &createPost); 
+	err := helpers.UnmarshalJSONToType(body, &createPost); 
 	if err != nil {
-		t.Fatalf("error unmarshalling dataBody: %v", err)
+		return "", fmt.Errorf("error unmarshalling dataBody: %v", err)
 	}
 
 	jsonMap, _ := helpers.BindJSONToMap(&createPost)
 
 	params := params_data.Params{
 		Header: common_test.UserTest,
-		Param: common_test.TestUUid,
+		Param: id,
 		Json: jsonMap,
 	}
 
 	env.LoadEnv("./.env")
-	_, err = post_function.Create(params)
+	createPostF, err := post_function.Create(params)
 	if err != nil {
-		t.Fatalf("error create function: %v", err)
+		return "", fmt.Errorf("error create function: %v", err)
 	}
+
+	return createPostF.Collection[0].Id, nil
+
 }

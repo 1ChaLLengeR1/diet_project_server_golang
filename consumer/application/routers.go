@@ -6,6 +6,7 @@ import (
 	file_handler "myInternal/consumer/handler/file"
 	post_handler "myInternal/consumer/handler/post"
 	project_handler "myInternal/consumer/handler/project"
+	statistics_handelr "myInternal/consumer/handler/statistics"
 	training_handler "myInternal/consumer/handler/training"
 	typeTraining_handler "myInternal/consumer/handler/typeTraining"
 	user_handler "myInternal/consumer/handler/user"
@@ -73,6 +74,12 @@ func loadRouters() *gin.Engine {
 		typeTrainingGroup.POST("/create", middleware.EnsureValidToken(), typeTraining_handler.HandlerCreateTypeTraining)
 		typeTrainingGroup.GET("/collection", middleware.EnsureValidToken(), typeTraining_handler.HandlerCollectionTypeTraining)
 		typeTrainingGroup.DELETE("/delete/:id", middleware.EnsureValidToken(), typeTraining_handler.HandlerDeleteTypeTraining)
+	}
+
+	// statistics routers
+	statisticsGroup := router.Group("/api/statistics")
+	{
+		statisticsGroup.GET("/collection/:projectId", statistics_handelr.HandlerCollectionStatistics)
 	}
 
 	// auth jwt

@@ -22,7 +22,7 @@ func TestDeleteTraining(t *testing.T) {
 	var createPost post_data.Post
 	err := helpers.UnmarshalJSONToType(dataBody, &createPost); 
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 
 	jsonMap, _ := helpers.BindJSONToMap(&createPost)
@@ -36,7 +36,7 @@ func TestDeleteTraining(t *testing.T) {
 	env.LoadEnv("./.env")
 	postCreate, err := post_function.Create(params)
 	if err != nil {
-		t.Fatalf("Error create post function: %v", err)
+		t.Fatalf("error create post function: %v", err)
 	}
 
 	trainingCollection := `
@@ -64,12 +64,12 @@ func TestDeleteTraining(t *testing.T) {
 	var trainingCollectionMap map[string]interface{}
 	err = helpers.UnmarshalJSONToType(trainingCollection, &trainingCollectionMap)
 	if err != nil {
-		t.Fatalf("Error unmarshalling trainingCollection: %v", err)
+		t.Fatalf("error unmarshalling trainingCollection: %v", err)
 	}
 	
 	jsonMap, err = helpers.BindJSONToMap(&trainingCollectionMap)
 	if err != nil {
-		t.Fatalf("Error binding JSON to map array: %v", err)
+		t.Fatalf("error binding JSON to map array: %v", err)
 	}
 
 	params = params_data.Params{
@@ -79,7 +79,7 @@ func TestDeleteTraining(t *testing.T) {
 
 	createTraining, err := training_function.CreateTraining(params)
 	if err != nil {
-		t.Fatalf("Error create training function: %v", err)
+		t.Fatalf("error create training function: %v", err)
 	}
 
 
@@ -101,10 +101,10 @@ func TestDeleteTraining(t *testing.T) {
 
 	deleteTraining, err := training_function.DeleteTraining(params)
 	if err != nil {
-		t.Fatalf("Error delete training function: %v", err)
+		t.Fatalf("error delete training function: %v", err)
 	}
 
 	if len(deleteTraining.Collection) != 2{
-		t.Fatalf("Error delete training function is not len == 2: %v", err)
+		t.Fatalf("error delete training function is not len == 2: %v", err)
 	}
 }
