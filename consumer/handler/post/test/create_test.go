@@ -21,7 +21,7 @@ func TestCreatePost(t *testing.T) {
 	var createPost post_data.Post
 	err := helpers.UnmarshalJSONToType(dataBody, &createPost); 
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 
 	jsonMap, _ := helpers.BindJSONToMap(&createPost)
@@ -35,6 +35,6 @@ func TestCreatePost(t *testing.T) {
 	env.LoadEnv("./.env")
 	_, err = post_function.Create(params)
 	if err != nil {
-		t.Fatalf("Error create function: %v", err)
+		t.Fatalf("error create function: %v", err)
 	}
 }

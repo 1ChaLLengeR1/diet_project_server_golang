@@ -27,7 +27,7 @@ func TestDeleteProject(t *testing.T) {
 	var createProject project_data.Create
 	err := helpers.UnmarshalJSONToType(dataBody, &createProject); 
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 	jsonMap, _ := helpers.BindJSONToMap(&createProject)
 
@@ -41,7 +41,7 @@ func TestDeleteProject(t *testing.T) {
 	env.LoadEnv("./.env")
 	project, err := project_function.CreateProject(params)
 	if err != nil {
-		t.Fatalf("Error create function: %v", err)
+		t.Fatalf("error create function: %v", err)
 	}
 
 	params = params_data.Params{
@@ -51,7 +51,7 @@ func TestDeleteProject(t *testing.T) {
 
 	_, err = project_function.DeleteProject(params)
 	if err != nil {
-		t.Fatalf("Error delete function: %v", err)
+		t.Fatalf("error delete function: %v", err)
 	}
 
 }
@@ -68,7 +68,7 @@ func TestFullDeleteProject(t *testing.T){
 	var createProject project_data.Create
 	err := helpers.UnmarshalJSONToType(dataBody, &createProject); 
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 	jsonMap, _ := helpers.BindJSONToMap(&createProject)
 
@@ -82,7 +82,7 @@ func TestFullDeleteProject(t *testing.T){
 	env.LoadEnv("./.env")
 	project, err := project_function.CreateProject(params)
 	if err != nil {
-		t.Fatalf("Error create function: %v", err)
+		t.Fatalf("error create function: %v", err)
 	}
 
 	formData := make(map[string][]*multipart.FileHeader)
@@ -124,7 +124,7 @@ func TestFullDeleteProject(t *testing.T){
 	var createPost post_data.Post
 	err = helpers.UnmarshalJSONToType(dataBody, &createPost); 
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 
 	jsonMap, _ = helpers.BindJSONToMap(&createPost)
@@ -137,7 +137,7 @@ func TestFullDeleteProject(t *testing.T){
 
 	_, err = post_function.Create(params)
 	if err != nil {
-		t.Fatalf("Error create function: %v", err)
+		t.Fatalf("error create function: %v", err)
 	}
 
 
@@ -148,6 +148,6 @@ func TestFullDeleteProject(t *testing.T){
 
 	_, err = project_function.DeleteProject(params)
 	if err != nil {
-		t.Fatalf("Error delete function: %v", err)
+		t.Fatalf("error delete function: %v", err)
 	}
 }

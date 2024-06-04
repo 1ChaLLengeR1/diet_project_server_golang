@@ -11,11 +11,11 @@ func TestCollection(t *testing.T) {
 	env.LoadEnv("./../../../../.env")
 	dictionaryCollection, err := dictionary_function.CollectionDictionary()
 	if err != nil {
-		t.Fatalf("Error collection dictionary function: %v", err)
+		t.Fatalf("error collection dictionary function: %v", err)
 	}
 
 	if(len(dictionaryCollection.Collection) < 3){
-		t.Fatalf("Error collection dictionary is smaller then three, error: %v", err)
+		t.Fatalf("error collection dictionary is smaller then three, error: %v", err)
 	}
 
 }

@@ -24,7 +24,7 @@ func TestChangeAll(t *testing.T) {
 	var createPost post_data.Post
 	err = helpers.UnmarshalJSONToType(dataBody, &createPost); 
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 
 	jsonMap, _ := helpers.BindJSONToMap(&createPost)
@@ -38,7 +38,7 @@ func TestChangeAll(t *testing.T) {
 	env.LoadEnv("./.env")
 	valueCreate, err := post_function.Create(params)
 	if err != nil {
-		t.Fatalf("Error create function: %v", err)
+		t.Fatalf("error create function: %v", err)
 	}
 
 
@@ -52,7 +52,7 @@ func TestChangeAll(t *testing.T) {
 
 	err = helpers.UnmarshalJSONToType(dataChangeBody, &changePost); 
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataChangeBody: %v", err)
+		t.Fatalf("error unmarshalling dataChangeBody: %v", err)
 	}
 
 	jsonMap, _ = helpers.BindJSONToMap(&changePost)
@@ -65,7 +65,7 @@ func TestChangeAll(t *testing.T) {
 
 	_, err = post_function.Change(params)
 	if err != nil {
-		t.Fatalf("Error change function: %v", err)
+		t.Fatalf("error change function: %v", err)
 	}
 
 }

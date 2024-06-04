@@ -18,7 +18,7 @@ func TestCreateTypeTraining(t *testing.T) {
 	var createTypeTraining typeTraining_data.Create
 	err := helpers.UnmarshalJSONToType(dataBody, &createTypeTraining); 
 	if err != nil {
-		t.Fatalf("Error unmarshalling dataBody: %v", err)
+		t.Fatalf("error unmarshalling dataBody: %v", err)
 	}
 
 	jsonMap, _ := helpers.BindJSONToMap(&createTypeTraining)
@@ -31,10 +31,10 @@ func TestCreateTypeTraining(t *testing.T) {
 	env.LoadEnv("./.env")
 	typeTrainingCreate, err := typeTraining_function.CreateTypeTraining(params)
 	if err != nil {
-		t.Fatalf("Error create typeTraining function: %v", err)
+		t.Fatalf("error create typeTraining function: %v", err)
 	}
 
 	if len(typeTrainingCreate.Collection) != 1{
-		t.Fatalf("Error collection from typeTraining function is not 1: %v", err)
+		t.Fatalf("error collection from typeTraining function is not 1: %v", err)
 	}
 }
