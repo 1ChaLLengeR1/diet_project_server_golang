@@ -12,7 +12,9 @@ import (
 	user_handler "myInternal/consumer/handler/user"
 	"myInternal/consumer/middleware"
 	"net/http"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,6 +27,15 @@ func loadRouters() *gin.Engine {
 	router.GET("/status", func(c *gin.Context) {
 		c.String(http.StatusOK, "Start routers Gin")
 	})
+
+	router.Use(cors.New(cors.Config{
+        AllowOrigins:     []string{"http://localhost:3000"}, 
+        AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"}, 
+        AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, 
+        ExposeHeaders:    []string{"Content-Length"},
+        AllowCredentials: true,
+        MaxAge:           12 * time.Hour, 
+    }))
 
 	// project routers
 	projectGroup := router.Group("/api/project")
