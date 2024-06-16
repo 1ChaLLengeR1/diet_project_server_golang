@@ -3,8 +3,7 @@ package test
 import (
 	"fmt"
 	"mime/multipart"
-	_ "myInternal/consumer/common"
-	common_test "myInternal/consumer/common"
+	common_test_params "myInternal/consumer/common"
 	helpers "myInternal/consumer/common"
 	params_data "myInternal/consumer/data"
 	file_function "myInternal/consumer/handler/file"
@@ -27,10 +26,10 @@ func TestCreateFile(t *testing.T) {
 	formData[fmt.Sprintf("file[%d]", i)] = append(formData[fmt.Sprintf("file[%d]", i)], fileHeader)
 
 	params = params_data.Params{
-		Header: common_test.UserTest,
+		Header: common_test_params.UserTest,
 		FormData: formData,
 		FormDataParams: map[string]interface{}{
-			"projectId": common_test.TestUUid,
+			"projectId": common_test_params.TestUUid,
 			"folder": "testFolder",
 			"names":  []string{"test"},
 		},
@@ -41,5 +40,4 @@ func TestCreateFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("createFile error: %v", err)
 	}
-
 }

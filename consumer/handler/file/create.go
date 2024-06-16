@@ -85,6 +85,7 @@ func HandlerCreateFile(c *gin.Context) {
 func CreateFile(params params_data.Params)(ResponseFileCreate, error){
 	userData := params.Header
     var filesData []file_data.Create
+    filesFormData := params.FormData
 
 	db, err := database.ConnectToDataBase()
 	if err != nil{
@@ -97,8 +98,12 @@ func CreateFile(params params_data.Params)(ResponseFileCreate, error){
 	}
 
     index := 0
+    randomStrFolderName, err := random.GenerateRandomString(4)
+    if err != nil {
+        return ResponseFileCreate{}, err
+    }
 
-	for _, files := range params.FormData {
+	for _, files := range filesFormData {
         for _, file := range files {
             src, err := file.Open()
             if err != nil {
@@ -114,6 +119,9 @@ func CreateFile(params params_data.Params)(ResponseFileCreate, error){
             }
             
 			folder := removePolishCharsAndCleanWhiteSpace(params.FormDataParams["folder"].(string)) 
+
+            randomFolderName := fmt.Sprintf("%s_%s", folder, randomStrFolderName)
+            folder = randomFolderName
 			folderPath := filepath.Join("consumer", "file", folder)
 			if _, err := os.Stat(folderPath); os.IsNotExist(err) {
 				if err := os.MkdirAll(folderPath, 0755); err != nil {

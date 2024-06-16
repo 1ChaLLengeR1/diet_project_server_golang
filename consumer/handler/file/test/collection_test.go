@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"mime/multipart"
 	common_test "myInternal/consumer/common"
-	helpers "myInternal/consumer/common"
 	params_data "myInternal/consumer/data"
+	file_data "myInternal/consumer/data/file"
 	file_function "myInternal/consumer/handler/file"
+	common_project "myInternal/consumer/handler/project/test"
+	helpers "myInternal/consumer/helper"
 	env "myInternal/consumer/initializers"
 	"testing"
 )
@@ -17,7 +19,7 @@ func TestCollectionFile(t *testing.T) {
 	i := 0
 	pathImg := "./consumer/common/test.png"
 
-	fileHeader, file, err := helpers.FileFromPath(pathImg)
+	fileHeader, file, err := common_test.FileFromPath(pathImg)
 	if err != nil {
 		t.Fatalf("createFormData: %v", err)
 	}
@@ -54,6 +56,50 @@ func TestCollectionFile(t *testing.T) {
 	if len(collectionFile.Collection) == 0{
 		t.Fatalf("collectionFile len is 0 - error: %v", err)
 	}
+}
 
+func TestCollectionMultiple(t *testing.T){
+	var params params_data.Params
+	formData := make(map[string][]*multipart.FileHeader)
+	env.LoadEnv("./.env")
 
+	newProjectId_1, _ := common_project.CreateProject()
+
+	newFile := CreateFile(2)
+	formData = newFile
+
+	params = params_data.Params{
+		Header:   common_test.UserTest,
+		FormData: formData,
+		FormDataParams: map[string]interface{}{
+			"projectId": newProjectId_1,
+			"folder": "testFolder",
+			"names":  []string{"test", "test2"},
+		},
+		
+	}
+
+	_, err := file_function.CreateFile(params)
+	if err != nil {
+		t.Fatalf("createFile error: %v", err)
+	}
+
+	ids := file_data.CollectionIds{
+		Ids: []string{newProjectId_1},
+	}
+	
+	jsonMap, _ := helpers.BindJSONToMap(&ids)
+
+	params = params_data.Params{
+		Json: jsonMap,
+	}
+
+	fileCollectionMultiple, err := file_function.FileCollectionMultiple(params)
+	if err != nil{
+		t.Fatalf("fileCollectionMultiple error: %v", err)
+	}
+
+	if len(fileCollectionMultiple.Collection) == 0{
+		t.Fatalf("fileCollectionMultiple collection length is 0: %v", err)
+	}
 }

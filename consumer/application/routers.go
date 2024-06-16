@@ -64,6 +64,7 @@ func loadRouters() *gin.Engine {
 		fileGroup.DELETE("/delete/:deleteId", middleware.EnsureValidToken(), file_handler.HandlerFileDelete)
 		fileGroup.GET("/collection/:postId", file_handler.HandlerFileCollection)
 		fileGroup.DELETE("/deleteAll", middleware.EnsureValidToken(), file_handler.HandlerFileAllDelete)
+		fileGroup.POST("/collectionMultiple", file_handler.HandlerFileCollectionMultiple)
 	}
 
 	//dictionary routers

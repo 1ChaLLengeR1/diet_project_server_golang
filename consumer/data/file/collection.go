@@ -11,3 +11,7 @@ type Collection struct {
 	CreatedUp  string `json:"createdUp"`
 	UpdateUp   string `json:"updateUp"`
 }
+
+type CollectionIds struct {
+	Ids []string `json:"ids"`
+}
