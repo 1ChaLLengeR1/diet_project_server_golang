@@ -67,6 +67,7 @@ func CreateTypeTraining(params params_data.Params)(ResponseCreateTypeTraning, er
 	if err != nil{
 		return ResponseCreateTypeTraning{}, err
 	}
+	defer db.Close()
 
 	_, users,  err := auth.CheckUser(userData)
 	if err != nil{

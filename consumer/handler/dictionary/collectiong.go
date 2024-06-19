@@ -50,6 +50,7 @@ func CollectionDictionary(params params_data.Params)(ResponseCollectionDictionar
     if err != nil {
         return ResponseCollectionDictionary{}, err
     }
+	defer db.Close()
 
 	query := `SELECT * FROM dictionary`
 	rows, err := db.Query(query)

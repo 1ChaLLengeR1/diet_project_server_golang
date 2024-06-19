@@ -31,6 +31,7 @@ func CreateStatisticOption(params params_data.Params)(ResponseCreateStatistics, 
 	if err != nil{
 		return ResponseCreateStatistics{}, err
 	}
+	defer db.Close()
 
 	_, _,  err = auth.CheckUser(userData)
 	if err != nil{

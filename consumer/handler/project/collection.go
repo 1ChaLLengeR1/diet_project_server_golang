@@ -66,6 +66,7 @@ func CollectionProject(params params_data.Params)(ResponseCollectionProject, err
     if err != nil {
         return ResponseCollectionProject{}, err
     }
+	defer db.Close()
 
 	if queryParam == "true" {
         _, users, err := auth.CheckUser(userData)
@@ -132,12 +133,12 @@ func CollectionProject(params params_data.Params)(ResponseCollectionProject, err
     } else {
         rows, err = db.Query(query, perPage, pagination.Offset, appLanguage)
     }
+	defer rows.Close()
 
 	if err != nil {
 		return ResponseCollectionProject{}, err
 	}
-	defer rows.Close()
-
+	
 	for rows.Next() {
 		var collection project_data.Collection
 		if err := rows.Scan(&collection.Id, &collection.UserId, &collection.IdLanguage, &collection.Title, &collection.Description, &collection.CreatedUp, &collection.UpdateUp); err != nil {

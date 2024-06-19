@@ -66,6 +66,7 @@ func DeleteTraining(params params_data.Params)(ResponseDeleteTraining, error){
 	if err != nil{
 		return ResponseDeleteTraining{}, err
 	}
+	defer db.Close()
 
 	_, _,  err = auth.CheckUser(userData)
 	if err != nil{

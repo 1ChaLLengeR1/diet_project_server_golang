@@ -18,10 +18,11 @@ func main(){
 		log.Fatal(err)
 	}
 
-	_ ,err = database.ConnectToDataBase()
+	db ,err := database.ConnectToDataBase()
 	if err != nil{
 		log.Fatal(err)
 	}
+	defer db.Close()
 
 	app := application.New()
 	err = app.Start(context.TODO())

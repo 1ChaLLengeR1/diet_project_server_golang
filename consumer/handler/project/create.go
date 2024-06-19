@@ -68,13 +68,13 @@ func CreateProject(params params_data.Params)(ResponseCreateProject, error) {
 
 	if appLanguage == ""{
 		return ResponseCreateProject{}, fmt.Errorf("appLanguage is nil or empty: %v", appLanguage)
-
 	}
 
 	db, err := database.ConnectToDataBase()
 	if err != nil{
 		return ResponseCreateProject{}, err
 	}
+	defer db.Close()
 
 	_, users,  err := auth.CheckUser(userData)
 	if err != nil{

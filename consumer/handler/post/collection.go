@@ -31,7 +31,6 @@ func HandlerCollection(c *gin.Context){
 		Param: c.Param("page"),
 	}
 
-
 	collection, err := Collection(params)
 	if err != nil{
 		c.JSON(http.StatusBadRequest, ResponseCollection{
@@ -55,7 +54,6 @@ func Collection(params params_data.Params)(ResponseCollection, error){
 	userData := params.Header
     queryParam := params.Query
 
-
     var usersData []user_data.User
     var collectionsData []collection_data.Collection
     var query string
@@ -67,6 +65,7 @@ func Collection(params params_data.Params)(ResponseCollection, error){
     if err != nil {
         return ResponseCollection{}, err
     }
+	defer db.Close()
 
 	if queryParam == "true" {
         _, users, err := auth.CheckUser(userData)

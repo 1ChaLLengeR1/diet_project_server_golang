@@ -25,7 +25,6 @@ func HandlerDelete(c *gin.Context){
 		Param: c.Param("id"),
 	}
 
-
 	delete, err := Delete(params)
 	if err != nil{
 		c.JSON(http.StatusBadRequest, ResponseDelete{
@@ -48,11 +47,11 @@ func Delete(params params_data.Params)(ResponseDelete, error){
 	var usersData []user_data.User
 	var deletesData []delete_data.Delete
 
-
 	db, err := database.ConnectToDataBase()
 	if err != nil{
 		return ResponseDelete{}, err
 	}
+	defer db.Close()
 
 	_, users,  err := auth.CheckUser(userData)
 	if err != nil{

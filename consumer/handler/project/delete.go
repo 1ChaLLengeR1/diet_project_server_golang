@@ -51,11 +51,11 @@ func DeleteProject(params params_data.Params)(ResponseDeleteProject, error){
 	var deletesData []project_data.Delete
 	var removeFiles []string
 
-
 	db, err := database.ConnectToDataBase()
 	if err != nil{
 		return ResponseDeleteProject{}, err
 	}
+	defer db.Close()
 
 	_, users, err := auth.CheckUser(userData)
 	if err != nil{

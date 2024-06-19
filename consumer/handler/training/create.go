@@ -63,6 +63,7 @@ func CreateTraining(params params_data.Params)(ResponseCreateTraining, error){
 	if err != nil{
 		return ResponseCreateTraining{}, err
 	}
+	defer db.Close()
 
 	trainingCollection, _ := params.Json["trainingCollection"].([]interface{})
 	now := time.Now()

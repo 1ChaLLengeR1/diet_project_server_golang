@@ -50,6 +50,7 @@ func DeleteFile(params params_data.Params)(ResponseFileDelete, error){
 	if err != nil{
 		return ResponseFileDelete{}, err
 	}
+	defer db.Close()
 
 	_, _,  err = auth.CheckUser(userData)
 	if err != nil{

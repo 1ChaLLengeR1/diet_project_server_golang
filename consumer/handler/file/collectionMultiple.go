@@ -63,6 +63,7 @@ func FileCollectionMultiple(params params_data.Params)(ResponseFileCollectionMul
 	if err != nil{
 		return ResponseFileCollectionMultiple{}, err
 	}
+	defer db.Close()
 
 	ids, _ := params.Json["ids"].([]interface{})
 

@@ -47,6 +47,7 @@ func FileCollection(params params_data.Params)(ResponseFileCollection, error){
 	if err != nil{
 		return ResponseFileCollection{}, err
 	}
+	defer db.Close()
 
 	_, _,  err = auth.CheckUser(userData)
 	if err != nil{

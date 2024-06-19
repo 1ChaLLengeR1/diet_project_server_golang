@@ -55,6 +55,7 @@ func CollectionTypeTraining(params params_data.Params)(ResponseCollectionTypeTra
     if err != nil {
         return ResponseCollectionTypeTraning{}, err
     }
+	defer db.Close()
 
 	_, users, err := auth.CheckUser(userData)
         if err != nil {

@@ -86,6 +86,7 @@ func Change(params params_data.Params)(ResponseChange, error){
 	if err != nil{
 		return ResponseChange{}, err
 	}
+	defer db.Close()
 
 	_, users,  err := auth.CheckUser(userData)
 	if err != nil{

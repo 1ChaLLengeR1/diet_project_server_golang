@@ -24,6 +24,7 @@ func ChangeTraining(params params_data.Params)(ResponseChangeTraining, error) {
 	if err != nil{
 		return ResponseChangeTraining{}, err
 	}
+	defer db.Close()
 
 	trainingCollection, _ := params.Json["trainingCollection"].([]interface{})
 	now := time.Now()

@@ -84,11 +84,11 @@ func Create(params params_data.Params) (ResponseCreate, error){
 	var usersData []user_data.User
 	var postsData []post_data.Post
 
-
 	db, err := database.ConnectToDataBase()
 	if err != nil{
 		return ResponseCreate{}, err
 	}
+	defer db.Close()
 
 	_, users,  err := auth.CheckUser(userData)
 	if err != nil{

@@ -71,6 +71,7 @@ func ChangeProject(params params_data.Params)(ResponseChnageProject, error){
 	if err != nil{
 		return ResponseChnageProject{}, err
 	}
+	defer db.Close()
 
 	_, users,  err := auth.CheckUser(userData)
 	if err != nil{

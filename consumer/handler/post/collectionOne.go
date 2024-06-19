@@ -77,6 +77,7 @@ func CollectionOne(params params_data.Params)(ResponseCollectionOne, error){
 	if err != nil{
 		return ResponseCollectionOne{}, err
 	}
+	defer db.Close()
 
 	if queryParam == "true" {
         _, users, err := auth.CheckUser(userData)
