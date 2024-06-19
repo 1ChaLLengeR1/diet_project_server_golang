@@ -84,7 +84,7 @@ func Collection(params params_data.Params)(ResponseCollection, error){
         page, _ = strconv.Atoi(pageStr)
     }
 
-	pagination := helpers.GetPaginationData(db, "post", page, perPage)
+	pagination := helpers.GetPaginationData(db, "post", usersData[0].Id, page, perPage)
 
 	var rows *sql.Rows
     if queryParam == "true" {

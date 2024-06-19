@@ -79,45 +79,42 @@ func CollectionProject(params params_data.Params)(ResponseCollectionProject, err
 			SELECT * 
 			FROM project 
 			WHERE "userId" = $1 
-			ORDER BY "createdUp" DESC 
+			ORDER BY "createdUp" ASC
 			LIMIT $2 OFFSET $3
-		)
-		SELECT 
-			p.id, 
-			p."userId", 
-			pml."idLanguage", 
-			pml.title, 
-			pml.description, 
-			p."createdUp", 
-			p."updateUp"
-		FROM 
-			filtered_projects p
-		JOIN 
-			project_multi_language pml ON p.id = pml."idProject"
-		WHERE 
-			pml."idLanguage" = $4;
+			)
+			SELECT 
+				p.id, 
+				p."userId", 
+				pml."idLanguage", 
+				pml.title, 
+				pml.description, 
+				p."createdUp", 
+				p."updateUp"
+			FROM filtered_projects p
+			JOIN project_multi_language pml ON p.id = pml."idProject"
+			WHERE pml."idLanguage" = $4
+			ORDER BY p."createdUp" DESC;
 		`
     } else {
-        query = `WITH limited_projects AS (
+        query = `
+			WITH filtered_projects AS (
 			SELECT * 
 			FROM project 
-			ORDER BY "createdUp" DESC 
+			ORDER BY "createdUp" ASC
 			LIMIT $1 OFFSET $2
-		)
-		SELECT 
-			lp.id, 
-			lp."userId", 
-			pml."idLanguage", 
-			pml.title, 
-			pml.description, 
-			lp."createdUp", 
-			lp."updateUp"
-		FROM 
-			limited_projects lp
-		JOIN 
-			project_multi_language pml ON lp.id = pml."idProject"
-		WHERE 
-			pml."idLanguage" = $3;`
+			)
+			SELECT 
+				p.id, 
+				p."userId", 
+				pml."idLanguage", 
+				pml.title, 
+				pml.description, 
+				p."createdUp", 
+				p."updateUp"
+			FROM filtered_projects p
+			JOIN project_multi_language pml ON p.id = pml."idProject"
+			WHERE pml."idLanguage" = $3
+			ORDER BY p."createdUp" DESC;`
     }
 
 	pageStr := params.Param
@@ -125,7 +122,7 @@ func CollectionProject(params params_data.Params)(ResponseCollectionProject, err
         page, _ = strconv.Atoi(pageStr)
     }
 
-	pagination := helpers.GetPaginationData(db, "project", page, perPage)
+	pagination := helpers.GetPaginationData(db, "project", usersData[0].Id,  page, perPage)
 
 	var rows *sql.Rows
     if queryParam == "true" {

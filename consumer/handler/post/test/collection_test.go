@@ -18,8 +18,6 @@ func TestCollectionAll(t *testing.T) {
 		"day":1,
 		"weight":88,
 		"kcal":2500,
-		"createdUp":"2024-05-12 10:30:00",
-		"updateUp":"2024-05-12 10:30:00",
 		"description":"desc"
 	}`
 
@@ -49,6 +47,7 @@ func TestCollectionAll(t *testing.T) {
 	params = params_data.Params{
 		Header: common_test.UserTest,
 		Param: "1",
+		Query: "true",
 		Json: jsonMap,
 	}
 
@@ -71,8 +70,6 @@ func TestCollectionOne(t *testing.T){
 		"day":1,
 		"weight":88,
 		"kcal":2500,
-		"createdUp":"2024-05-12 10:30:00",
-		"updateUp":"2024-05-12 10:30:00",
 		"description":"desc"
 	}`
 
@@ -106,5 +103,4 @@ func TestCollectionOne(t *testing.T){
 	if err != nil {
 		t.Fatalf("error in create function: %v", err)
 	}
-
 }
