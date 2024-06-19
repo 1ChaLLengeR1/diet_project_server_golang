@@ -65,8 +65,8 @@ func DeleteFile(params params_data.Params)(ResponseFileDelete, error){
 	}
 	defer rows.Close()
 
+	var file file_data.Delete
 	for rows.Next() {
-		var file file_data.Delete
 		if err := rows.Scan(&file.Id, &file.ProjectId, &file.Name, &file.Folder, &file.FolderPath,  &file.Path, &file.Url, &file.CreatedUp, &file.UpdateUp); err != nil{
 			return ResponseFileDelete{}, err
 		}
@@ -78,6 +78,22 @@ func DeleteFile(params params_data.Params)(ResponseFileDelete, error){
 
 		filesData = append(filesData, file)
 	}
+
+	dir := file.FolderPath
+	if _, err := os.Stat(dir); !os.IsNotExist(err) {
+        files, err := os.ReadDir(dir)
+        if err != nil {
+            return ResponseFileDelete{}, err
+        }
+
+		if len(files) == 0 {
+			if err := os.Remove(dir); err != nil {
+                return ResponseFileDelete{}, err
+            }
+        }
+
+    }
+
 
 	return ResponseFileDelete{
 		Collection: filesData,

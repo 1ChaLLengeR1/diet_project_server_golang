@@ -10,6 +10,7 @@ import (
 	helpers "myInternal/consumer/helper"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -81,7 +82,9 @@ func ChangeProject(params params_data.Params)(ResponseChnageProject, error){
 
 	title, titleOk := params.Json["title"].(string)
 	description, descriptionOk := params.Json["description"].(string)
-	updateUp, _ := params.Json["updateUp"].(string)
+	now := time.Now()
+    formattedDate := now.Format("2006-01-02 15:04:05")
+	updateUp := formattedDate
 	
 	var updateFields []string
 	if titleOk {

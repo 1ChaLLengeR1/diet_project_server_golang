@@ -13,9 +13,7 @@ import (
 func TestChangeProject(t *testing.T) {
 	dataBody := `{
 		"title":"test title",
-		"description":"desc test",
-		"createdUp":"2024-05-12 10:30:00",
-		"updateUp":"2024-05-12 10:30:00"
+		"description":"desc test"
 	}`
 
 	var createProject project_data.Create
@@ -40,8 +38,7 @@ func TestChangeProject(t *testing.T) {
 
 	dataBody = `{
 		"title":"test title update",
-		"description":"desc test update",
-		"updateUp":"2024-06-12 10:00:00"
+		"description":"desc test update"
 	}`
 
 	var changeProject project_data.Create

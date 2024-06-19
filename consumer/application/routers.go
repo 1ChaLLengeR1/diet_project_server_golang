@@ -30,7 +30,7 @@ func loadRouters() *gin.Engine {
 
 	router.Use(cors.New(cors.Config{
         AllowOrigins:     []string{"http://localhost:3000"}, 
-        AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"}, 
+        AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH"}, 
         AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "UserData", "AppLanguage"}, 
         ExposeHeaders:    []string{"Content-Length"},
         AllowCredentials: true,
@@ -62,7 +62,7 @@ func loadRouters() *gin.Engine {
 	{
 		fileGroup.POST("/create", middleware.EnsureValidToken(), file_handler.HandlerCreateFile)
 		fileGroup.DELETE("/delete/:deleteId", middleware.EnsureValidToken(), file_handler.HandlerFileDelete)
-		fileGroup.GET("/collection/:postId", file_handler.HandlerFileCollection)
+		fileGroup.GET("/collection/:projectId", file_handler.HandlerFileCollection)
 		fileGroup.DELETE("/deleteAll", middleware.EnsureValidToken(), file_handler.HandlerFileAllDelete)
 		fileGroup.POST("/collectionMultiple", file_handler.HandlerFileCollectionMultiple)
 	}
