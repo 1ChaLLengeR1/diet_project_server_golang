@@ -102,9 +102,10 @@ func loadRouters() *gin.Engine {
 	}
 
 	//user routers
-	userGroup := router.Group("/api/user", middleware.EnsureValidToken())
+	userGroup := router.Group("/api/user")
 	{
-		userGroup.PATCH("/change", user_handler.HandlerChangeUser)
+		userGroup.PATCH("/change", middleware.EnsureValidToken(), user_handler.HandlerChangeUser)
+		userGroup.GET("/collection", user_handler.HandlerCollectionUser)
 	}
 
 	return router

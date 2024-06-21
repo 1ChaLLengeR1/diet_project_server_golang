@@ -6,8 +6,8 @@ type User struct {
 	LastName *string `json:"lastName"`
 	NickName *string `json:"nickName"`
 	Email    *string `json:"email"`
-	Role     string  `json:"role"`
-	Sub      string  `json:"sub"`
+	Role     *string `json:"role"`
+	Sub      *string `json:"sub"`
 }
 
 type UserData struct {

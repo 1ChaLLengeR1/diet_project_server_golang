@@ -25,7 +25,6 @@ type ResponseCollectionProject struct{
 func HandlerCollectionProject(c *gin.Context) {
 	params := params_data.Params{
 		Header: c.GetHeader("UserData"),
-		Query: c.Query("private"),
 		AppLanguage: c.GetHeader("AppLanguage"),
 		Param: c.Param("page"),
 	}
@@ -52,7 +51,6 @@ func HandlerCollectionProject(c *gin.Context) {
 
 func CollectionProject(params params_data.Params)(ResponseCollectionProject, error) {
 	userData := params.Header
-    queryParam := params.Query
 	appLanguage := params.AppLanguage
 
     var usersData []user_data.User
@@ -68,54 +66,32 @@ func CollectionProject(params params_data.Params)(ResponseCollectionProject, err
     }
 	defer db.Close()
 
-	if queryParam == "true" {
-        _, users, err := auth.CheckUser(userData)
-        if err != nil {
-            return ResponseCollectionProject{}, err
-        }
-        usersData = users
+	_, users, err := auth.CheckUser(userData)
+	if err != nil {
+		return ResponseCollectionProject{}, err
+	}
+	usersData = users
 
-        query = `WITH filtered_projects AS (
-			SELECT * 
-			FROM project 
-			WHERE "userId" = $1 
-			ORDER BY "createdUp" ASC
-			LIMIT $2 OFFSET $3
-			)
-			SELECT 
-				p.id, 
-				p."userId", 
-				pml."idLanguage", 
-				pml.title, 
-				pml.description, 
-				p."createdUp", 
-				p."updateUp"
-			FROM filtered_projects p
-			JOIN project_multi_language pml ON p.id = pml."idProject"
-			WHERE pml."idLanguage" = $4
-			ORDER BY p."createdUp" DESC;
-		`
-    } else {
-        query = `
-			WITH filtered_projects AS (
-			SELECT * 
-			FROM project 
-			ORDER BY "createdUp" ASC
-			LIMIT $1 OFFSET $2
-			)
-			SELECT 
-				p.id, 
-				p."userId", 
-				pml."idLanguage", 
-				pml.title, 
-				pml.description, 
-				p."createdUp", 
-				p."updateUp"
-			FROM filtered_projects p
-			JOIN project_multi_language pml ON p.id = pml."idProject"
-			WHERE pml."idLanguage" = $3
-			ORDER BY p."createdUp" DESC;`
-    }
+	query = `WITH filtered_projects AS (
+		SELECT * 
+		FROM project 
+		WHERE "userId" = $1 
+		ORDER BY "createdUp" ASC
+		LIMIT $2 OFFSET $3
+		)
+		SELECT 
+			p.id, 
+			p."userId", 
+			pml."idLanguage", 
+			pml.title, 
+			pml.description, 
+			p."createdUp", 
+			p."updateUp"
+		FROM filtered_projects p
+		JOIN project_multi_language pml ON p.id = pml."idProject"
+		WHERE pml."idLanguage" = $4
+		ORDER BY p."createdUp" DESC;
+	`
 
 	pageStr := params.Param
     if pageStr != "" {
@@ -125,11 +101,7 @@ func CollectionProject(params params_data.Params)(ResponseCollectionProject, err
 	pagination := helpers.GetPaginationData(db, "project", usersData[0].Id,  page, perPage)
 
 	var rows *sql.Rows
-    if queryParam == "true" {
-        rows, err = db.Query(query, &usersData[0].Id, perPage, pagination.Offset, appLanguage)
-    } else {
-        rows, err = db.Query(query, perPage, pagination.Offset, appLanguage)
-    }
+	rows, err = db.Query(query, &usersData[0].Id, perPage, pagination.Offset, appLanguage)
 	defer rows.Close()
 
 	if err != nil {

@@ -42,7 +42,6 @@ func TestCollectionProject(t *testing.T) {
 		Header: common_test.UserTest,
 		AppLanguage: common_test.AppLanguagePL,
 		Param: "1",
-		Query: "true",
 	}
 
 	projectCollection, err := project_function.CollectionProject(params)
@@ -87,7 +86,6 @@ func TestCollectionOne(t *testing.T){
 		Header: common_test.UserTest,
 		Param: project.Collection[0].Id,
 		AppLanguage: common_test.AppLanguagePL,
-		Query: "true",
 	}
 
 	projectCollection, err := project_function.CollectionOneProject(params)

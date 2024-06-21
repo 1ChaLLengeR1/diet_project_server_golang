@@ -76,7 +76,7 @@ func CollectionDictionary(params params_data.Params)(ResponseCollectionDictionar
 
 	for rows.Next() {
 		var dictionary dictionary_data.MultiCollection
-		if err := rows.Scan(&dictionary.Id, &dictionary.Key, &dictionary.DictionaryId, &dictionary.Translation); err != nil {
+		if err := rows.Scan(&dictionary.Id, &dictionary.DictionaryId, &dictionary.Key, &dictionary.Translation); err != nil {
 			return ResponseCollectionDictionary{}, err
 		}
 		dictionaryMultiCollection = append(dictionaryMultiCollection, dictionary)
