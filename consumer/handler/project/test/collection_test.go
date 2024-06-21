@@ -57,9 +57,7 @@ func TestCollectionProject(t *testing.T) {
 func TestCollectionOne(t *testing.T){
 	dataBody := `{
 		"title":"test title",
-		"description":"desc test",
-		"createdUp":"2024-05-12 10:30:00",
-		"updateUp":"2024-05-12 10:30:00"
+		"description":"desc test"
 	}`
 
 	var createProject project_data.Create
@@ -95,5 +93,21 @@ func TestCollectionOne(t *testing.T){
 
 	if(len(projectCollection.Collection) == 0){
 		t.Fatalf("error in len collection one == 0")
+	}
+}
+
+func TestCollectionPublic(t *testing.T){
+	_, err := CreateProject()
+	if err != nil {
+		t.Fatalf("error create function: %v", err)
+	}
+
+	collectionPublic, err := project_function.CollectionPublicProjects(common_test.UserId, common_test.AppLanguagePL, "1")
+	if err != nil {
+		t.Fatalf("error collection public projects function: %v", err)
+	}
+
+	if len(collectionPublic.Collection) == 0 {
+		t.Fatalf("error in len collection public project one == 0")
 	}
 }

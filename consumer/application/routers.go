@@ -45,6 +45,7 @@ func loadRouters() *gin.Engine {
 		projectGroup.PATCH("/change/:projectId", middleware.EnsureValidToken(), project_handler.HandlerChangeProject)
 		projectGroup.GET("/collection/:page", project_handler.HandlerCollectionProject)
 		projectGroup.GET("/collectionOne/:projectId", project_handler.HandlerCollectionOneProject)
+		projectGroup.POST("/collectionPublic", project_handler.HandlerCollectionPublicProject)
 	}
 
 	//post routers

@@ -10,5 +10,5 @@ CREATE TABLE IF NOT EXISTS public.users (
 );
 
 
-INSERT INTO users ("userName", "lastName", "nickName", email, role, sub) 
-VALUES('','','test','test@gmail.com','user','1234567890');
+INSERT INTO users (id,"userName", "lastName", "nickName", email, role, sub) 
+VALUES('21c2b0d3-e045-48f9-98d9-39d8ffbf7597','','','test','test@gmail.com','user','1234567890');
