@@ -90,7 +90,7 @@ func CollectionProject(params params_data.Params)(ResponseCollectionProject, err
 		SELECT * 
 		FROM project 
 		WHERE "userId" = $1 
-		ORDER BY "createdUp" ASC
+		ORDER BY "createdUp" DESC
 		LIMIT $2 OFFSET $3
 		)
 		SELECT 
@@ -153,7 +153,7 @@ func CollectionPublicProjects(userId string, appLanguage string, offsetPage stri
 		SELECT * 
 		FROM project 
 		WHERE "userId" = $1 
-		ORDER BY "createdUp" ASC
+		ORDER BY "createdUp" DESC
 		LIMIT $2 OFFSET $3
 		)
 		SELECT 
