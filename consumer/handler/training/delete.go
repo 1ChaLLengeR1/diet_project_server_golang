@@ -80,7 +80,48 @@ func DeleteTraining(params params_data.Params)(ResponseDeleteTraining, error){
 		removeIdsTraning = append(removeIdsTraning, fmt.Sprintf("'%s'", id))
 	}
 
-	query := `DELETE FROM training WHERE "postId" = $1 AND "id" IN (` + strings.Join(removeIdsTraning, ", ") + `) RETURNING "id", "postId", "type", "time", "kcal", "createdUp", "updateUp";`
+	if len(removeIdsTraning) != 0 {
+		query := `DELETE FROM training WHERE "postId" = $1 AND "id" IN (` + strings.Join(removeIdsTraning, ", ") + `) RETURNING "id", "postId", "type", "time", "kcal", "createdUp", "updateUp";`
+		rows, err := db.Query(query, postId)
+		if err != nil {
+			return ResponseDeleteTraining{}, err
+		}
+		defer rows.Close()
+	
+		for rows.Next(){
+			var deleteTraining training_data.Delete
+			if err := rows.Scan(&deleteTraining.ID, &deleteTraining.PostId, &deleteTraining.Type, &deleteTraining.Time, &deleteTraining.Kcal, &deleteTraining.CreatedUp, &deleteTraining.UpdateUp); err != nil {
+				return ResponseDeleteTraining{}, err
+			}
+			deleteTrainings = append(deleteTrainings, deleteTraining)
+	
+		}
+	}
+
+	return ResponseDeleteTraining{
+		Collection: deleteTrainings,
+		Status: http.StatusOK,
+		Error: "",
+	}, nil
+}
+
+func DeleteTrainings(params params_data.Params)(ResponseDeleteTraining, error){
+	userData := params.Header
+	postId := params.Param
+	var deleteTrainings []training_data.Delete
+
+	db, err := database.ConnectToDataBase()
+	if err != nil{
+		return ResponseDeleteTraining{}, err
+	}
+	defer db.Close()
+
+	_, _,  err = auth.CheckUser(userData)
+	if err != nil{
+		return ResponseDeleteTraining{}, err
+	}
+
+	query := `DELETE FROM training WHERE "postId" = $1 RETURNING "id", "postId", "type", "time", "kcal", "createdUp", "updateUp";`
 	rows, err := db.Query(query, postId)
 	if err != nil {
 		return ResponseDeleteTraining{}, err

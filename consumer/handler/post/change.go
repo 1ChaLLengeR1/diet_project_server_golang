@@ -19,15 +19,19 @@ import (
 
 type ResponseChange struct{
 	Collection []change_data.Change `json:"collection"`
-	CollectionTraining []training_data.Change `json:"collectionTraining"`
+	CollectionTrainingChange []training_data.Change `json:"collectionTrainingChange"`
+	CollectionTrainingAdd    []training_data.Create       `json:"collectionTrainingAdd"`
+	RemoveIds                []training_data.Delete           `json:"removeIds"`
 	Status     int              	`json:"status"`
 	Error      string          		`json:"error"`
 }
 
-func responseStatus(c *gin.Context, col []change_data.Change, colTrai []training_data.Change, status int, err error) {
+func responseStatus(c *gin.Context, col []change_data.Change, coTraiChage []training_data.Change, colTraiAdd []training_data.Create, removeIds []training_data.Delete, status int, err error) {
 	response := ResponseChange{
 		Collection:         col,
-		CollectionTraining: colTrai,
+		CollectionTrainingChange: coTraiChage,
+		CollectionTrainingAdd: colTraiAdd,
+		RemoveIds: removeIds,
 		Status:             status,
 	}
 	
@@ -40,11 +44,11 @@ func responseStatus(c *gin.Context, col []change_data.Change, colTrai []training
 
 func HandlerChange(c *gin.Context){
 
-	var changePost change_data.Change
-	c.BindJSON(&changePost)
+	var changePost change_data.ChangePost
+	c.ShouldBindJSON(&changePost)
 	jsonMap, err := helpers.BindJSONToMap(&changePost)
 	if err != nil {
-		responseStatus(c, nil, nil, http.StatusBadRequest, err)
+		responseStatus(c, nil, nil,nil, nil, http.StatusBadRequest, err)
 		return
 	}
 		
@@ -57,30 +61,36 @@ func HandlerChange(c *gin.Context){
 
 	change, err := Change(params)
 	if err != nil{
-		responseStatus(c, nil, nil, http.StatusBadRequest, err)
+		responseStatus(c, nil, nil,nil, nil, http.StatusBadRequest, err)
 		return
-	}
-
-	params = params_data.Params{
-		Param: change.Collection[0].Id,
-		Json: jsonMap,
 	}
 
 	changeTraining, err := training_function.ChangeTraining(params)
 	if err != nil{
-		responseStatus(c, nil, nil, http.StatusBadRequest, err)
+		responseStatus(c, nil, nil,nil, nil, http.StatusBadRequest, err)
 		return
 	}
 
-	responseStatus(c, change.Collection, changeTraining.Collection, change.Status, nil)
+	createTrainingF, err := training_function.CreateTraining(params)
+	if err != nil{
+		responseStatus(c, nil, nil, nil, nil, http.StatusBadRequest, err)
+		return
+	}
+
+	removeTrainingF, err := training_function.DeleteTraining(params)
+	if err != nil{
+		responseStatus(c, nil, nil, nil, nil, http.StatusBadRequest, err)
+		return
+	}
+
+	responseStatus(c, change.Collection,  changeTraining.Collection, createTrainingF.Collection, removeTrainingF.Collection, change.Status, nil)
 }
 
 func Change(params params_data.Params)(ResponseChange, error){
-	userData := params.Header
 	
+	userData := params.Header
 	var usersData []user_data.User
 	var changesData []change_data.Change
-
 
 	db, err := database.ConnectToDataBase()
 	if err != nil{
@@ -94,7 +104,6 @@ func Change(params params_data.Params)(ResponseChange, error){
 	}
 
 	usersData = users
-
 	id := params.Param
 
 	day, dayOk := params.Json["day"].(float64) 
@@ -138,7 +147,6 @@ func Change(params params_data.Params)(ResponseChange, error){
 
 	return ResponseChange{
 		Collection: changesData,
-		CollectionTraining: nil,
 		Status: http.StatusOK,
 		Error: "",
 	}, nil

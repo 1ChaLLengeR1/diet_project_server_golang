@@ -38,9 +38,9 @@ func TestCollectioneOne(t *testing.T) {
 		t.Fatalf("error create post function: %v", err)
 	}
 
-	trainingCollection := `
+	collectionTraining := `
 	{
-		"trainingCollection": [
+		"collectionTraining": [
 			{
 				"type":"gym",
 				"time":"2:05:32",
@@ -61,7 +61,7 @@ func TestCollectioneOne(t *testing.T) {
 	`
 	
 	var trainingCollectionMap map[string]interface{}
-	err = helpers.UnmarshalJSONToType(trainingCollection, &trainingCollectionMap)
+	err = helpers.UnmarshalJSONToType(collectionTraining, &trainingCollectionMap)
 	if err != nil {
 		t.Fatalf("error unmarshalling trainingCollection: %v", err)
 	}

@@ -63,6 +63,21 @@ func HandlerCollectionPublicProject(c *gin.Context){
 	responseCollectionProject(c, collection.Collection, collection.Pagination, collection.Status, nil)
 }
 
+func HandlerCollectionAll(c *gin.Context){
+	params := params_data.Params{
+		Header: c.GetHeader("UserData"),
+		AppLanguage: c.GetHeader("AppLanguage"),
+	}
+
+	collection, err := CollectionProject(params)
+	if err != nil{
+		responseCollectionProject(c, nil, nil, http.StatusBadRequest, err)
+		return
+	}
+
+	responseCollectionProject(c, collection.Collection, nil, collection.Status, nil)
+}
+
 func CollectionProject(params params_data.Params)(ResponseCollectionProject, error) {
 	userData := params.Header
 	appLanguage := params.AppLanguage
@@ -196,6 +211,66 @@ func CollectionPublicProjects(userId string, appLanguage string, offsetPage stri
 		Collection: collectionsData,
 		Status: http.StatusOK,
 		Pagination: &pagination,
+		Error: "",
+	}, nil
+}
+
+func CollectionAll(params params_data.Params)(ResponseCollectionProject, error){
+
+	userData := params.Header
+	appLanguage := params.AppLanguage
+	var collectionsData []project_data.Collection
+	var usersData []user_data.User
+
+	db, err := database.ConnectToDataBase()
+    if err != nil {
+        return ResponseCollectionProject{}, err
+    }
+	defer db.Close()
+
+	_, users, err := auth.CheckUser(userData)
+	if err != nil {
+		return ResponseCollectionProject{}, err
+	}
+	usersData = users
+
+	query := `WITH filtered_projects AS (
+		SELECT * 
+		FROM project 
+		WHERE "userId" = $1 
+		ORDER BY "createdUp" DESC
+		)
+		SELECT 
+			p.id, 
+			p."userId", 
+			pml."idLanguage", 
+			pml.title, 
+			pml.description, 
+			p."createdUp", 
+			p."updateUp"
+		FROM filtered_projects p
+		JOIN project_multi_language pml ON p.id = pml."idProject"
+		WHERE pml."idLanguage" = $2
+		ORDER BY p."createdUp" DESC;
+	`
+
+	rows, err := db.Query(query, &usersData[0].Id, appLanguage)
+	if err != nil{
+		return ResponseCollectionProject{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var collection project_data.Collection
+		if err := rows.Scan(&collection.Id, &collection.UserId, &collection.IdLanguage, &collection.Title, &collection.Description, &collection.CreatedUp, &collection.UpdateUp); err != nil {
+			return ResponseCollectionProject{}, err
+		}
+		collectionsData = append(collectionsData, collection)
+	}
+
+	return ResponseCollectionProject{
+		Collection: collectionsData,
+		Status: http.StatusOK,
 		Error: "",
 	}, nil
 }

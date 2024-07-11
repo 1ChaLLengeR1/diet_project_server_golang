@@ -24,8 +24,8 @@ type ResponseCreate struct {
 
 func CreateHandler(c * gin.Context){
 
-	var createPost post_data.Post
-	c.BindJSON(&createPost)
+	var createPost post_data.CreatePost
+	c.ShouldBindJSON(&createPost)
 
 	jsonMap, err := helpers.BindJSONToMap(&createPost)
 	if err != nil {

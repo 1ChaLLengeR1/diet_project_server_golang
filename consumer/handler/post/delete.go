@@ -3,9 +3,11 @@ package post
 import (
 	params_data "myInternal/consumer/data"
 	delete_data "myInternal/consumer/data/post"
+	data_training "myInternal/consumer/data/training"
 	user_data "myInternal/consumer/data/user"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
+	function_training "myInternal/consumer/handler/training"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +15,7 @@ import (
 
 type ResponseDelete struct{
 	Collection []delete_data.Delete `json:"collection"`
+	CollectionTraining []data_training.Delete `json:"collectionTraining"`
 	Status     int 					`json:"status"`
 	Error      string				`json:"error"`
 }
@@ -29,6 +32,23 @@ func HandlerDelete(c *gin.Context){
 	if err != nil{
 		c.JSON(http.StatusBadRequest, ResponseDelete{
 			Collection: nil,
+			CollectionTraining: nil,
+			Status: http.StatusBadRequest,
+			Error: err.Error(),
+		})
+		return
+	}
+
+	params = params_data.Params{
+		Header: c.GetHeader("UserData"),
+		Param: delete.Collection[0].Id,
+	}
+
+	training, err := function_training.DeleteTrainings(params)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, ResponseDelete{
+			Collection: nil,
+			CollectionTraining: nil,
 			Status: http.StatusBadRequest,
 			Error: err.Error(),
 		})
@@ -37,6 +57,7 @@ func HandlerDelete(c *gin.Context){
 
 	c.JSON(http.StatusOK, ResponseDelete{
 		Collection: delete.Collection,
+		CollectionTraining: training.Collection,
 		Status: delete.Status,
 		Error: delete.Error,
 	})

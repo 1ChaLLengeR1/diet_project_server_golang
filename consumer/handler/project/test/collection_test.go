@@ -111,3 +111,25 @@ func TestCollectionPublic(t *testing.T){
 		t.Fatalf("error in len collection public project one == 0")
 	}
 }
+
+func TestCollectionAll(t *testing.T){
+
+	params := params_data.Params{
+		Header: common_test.UserTest,
+		AppLanguage: common_test.AppLanguagePL,
+	}
+
+	_, err := CreateProject()
+	if err != nil {
+		t.Fatalf("error create function: %v", err)
+	}
+
+	collectionAll, err := project_function.CollectionAll(params)
+	if err != nil {
+		t.Fatalf("error collection all projects function: %v", err)
+	}
+
+	if len(collectionAll.Collection) == 0 {
+		t.Fatalf("error in len collection all project one == 0")
+	}
+}

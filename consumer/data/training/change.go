@@ -9,3 +9,4 @@ type Change struct {
 	CreatedUp string `json:"createdUp"`
 	UpdateUp  string `json:"updateUp"`
 }
+

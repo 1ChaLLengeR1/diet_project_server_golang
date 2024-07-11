@@ -11,7 +11,7 @@ func CreateTraining(trainingCollection string, postId string)error{
 	var trainingCollectionMap map[string]interface{}
 	err := helpers.UnmarshalJSONToType(trainingCollection, &trainingCollectionMap)
 	if err != nil {
-		return fmt.Errorf("error unmarshalling trainingCollection: %v", err)
+		return fmt.Errorf("error unmarshalling collectionTraining: %v", err)
 	}
 	
 	jsonMap, err := helpers.BindJSONToMap(&trainingCollectionMap)

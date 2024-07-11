@@ -20,7 +20,7 @@ type Training struct {
 }
 
 type TrainingCollection struct {
-	TrainingCollection []Training `json:"trainingCollection"`
+	TrainingCollection []Training `json:"collectionTraining"`
 }
 
 func createDumpStatistics() (string, error) {
@@ -46,17 +46,17 @@ func createDumpStatistics() (string, error) {
 
 	trainingCollections := [][]Training{
 		{
-			{Type: "bike", Time: "1:56:56", Kcal: 1341},
+			{Type: "bike", Time: "01:56:56", Kcal: 1341},
 		},
 		{
 			{Type: "bike", Time: "2:11:04", Kcal: 1424},
 		},
 		{},
 		{
-			{Type: "bike", Time: "1:41:54", Kcal: 1093},
+			{Type: "bike", Time: "01:41:54", Kcal: 1093},
 		},
 		{
-			{Type: "bike", Time: "1:56:56", Kcal: 1341},
+			{Type: "bike", Time: "01:56:56", Kcal: 1341},
 		},
 		{},
 		{

@@ -101,5 +101,4 @@ func DeleteFile(params params_data.Params)(ResponseFileDelete, error){
 		Status: http.StatusOK,
 		Error: "",
 	}, nil
-
 }

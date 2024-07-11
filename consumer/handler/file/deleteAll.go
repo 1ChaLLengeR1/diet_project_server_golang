@@ -110,8 +110,6 @@ func DeleteFileAll(params params_data.Params)(ResponseFileAllDelete, error){
 
 }
 
-
-
 func removeFolders(paths []string) error {
     for _, path := range paths {
         err := os.RemoveAll(path)
