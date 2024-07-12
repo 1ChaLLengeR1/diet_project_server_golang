@@ -6,7 +6,6 @@ import (
 	post_data "myInternal/consumer/data/post"
 	statistics_data "myInternal/consumer/data/statistics"
 	database "myInternal/consumer/database"
-	"myInternal/consumer/handler/auth"
 	"net/http"
 	"strings"
 )
@@ -19,7 +18,6 @@ type ResponseCreateStatistics struct {
 
 func CreateStatisticOption(params params_data.Params)(ResponseCreateStatistics, error){
 
-	userData := params.Header
 	projectId := params.Param
 	var postsData []post_data.Collection
 	var postIds []string
@@ -32,11 +30,6 @@ func CreateStatisticOption(params params_data.Params)(ResponseCreateStatistics, 
 		return ResponseCreateStatistics{}, err
 	}
 	defer db.Close()
-
-	_, _,  err = auth.CheckUser(userData)
-	if err != nil{
-		return ResponseCreateStatistics{}, err
-	}
 
 	query := `SELECT * FROM post WHERE "projectId" = $1 ORDER BY day ASC;`
 	rows, err := db.Query(query, projectId)

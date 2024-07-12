@@ -31,7 +31,6 @@ func responseCollectionStatisticsStatus(c *gin.Context, col []statistics_data.Cr
 func HandlerCollectionStatistics(c * gin.Context){
 	params := params_data.Params{
 		Param: c.Param("projectId"),
-		Header: c.GetHeader("UserData"),
 	}
 
 	createStatisticOption, err := CreateStatisticOption(params)

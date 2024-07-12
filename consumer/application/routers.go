@@ -69,6 +69,7 @@ func loadRouters() *gin.Engine {
 		fileGroup.GET("/collection/:projectId", file_handler.HandlerFileCollection)
 		fileGroup.DELETE("/deleteAll", middleware.EnsureValidToken(), file_handler.HandlerFileAllDelete)
 		fileGroup.POST("/collectionMultiple", file_handler.HandlerFileCollectionMultiple)
+		fileGroup.GET("/downolad/zip/:projectId", middleware.EnsureValidToken(), file_handler.HandlerZipDownolad)
 	}
 
 	//dictionary routers

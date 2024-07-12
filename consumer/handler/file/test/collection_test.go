@@ -103,3 +103,19 @@ func TestCollectionMultiple(t *testing.T){
 		t.Fatalf("fileCollectionMultiple collection length is 0: %v", err)
 	}
 }
+
+func TestDownloadProject(t *testing.T){
+	env.LoadEnv("./.env")
+
+	params := params_data.Params{
+		Param: "5a3f3903-ebf5-4a2c-bf1b-7aab3c5f1681",
+	}
+
+	fileZip, err := file_function.CreateZip(params)
+	if err != nil {
+		t.Fatalf("download project error: %v", err)
+	}
+	if fileZip == ""{
+		t.Fatalf("Not get path to zip!")
+	}
+}

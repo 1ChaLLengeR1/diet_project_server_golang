@@ -3,7 +3,6 @@ package test
 import (
 	"encoding/json"
 	"fmt"
-	common_test "myInternal/consumer/common"
 	params_data "myInternal/consumer/data"
 	common_post "myInternal/consumer/handler/post/test"
 	common_project "myInternal/consumer/handler/project/test"
@@ -101,7 +100,6 @@ func TestCreateStatistics(t *testing.T) {
 	}
 
 	params := params_data.Params{
-		Header: common_test.UserTest,
 		Param: projectId,
 	}
 
