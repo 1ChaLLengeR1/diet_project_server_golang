@@ -9,6 +9,7 @@ import (
 	user_data "myInternal/consumer/data/user"
 	database "myInternal/consumer/database"
 	auth "myInternal/consumer/handler/auth"
+	check_user_permission "myInternal/consumer/helper"
 	helpers "myInternal/consumer/helper"
 
 	"github.com/gin-gonic/gin"
@@ -76,6 +77,11 @@ func ChangeUser(params params_data.Params)(ResponseChangeUser, error){
 	_, users, err = auth.CheckUser(userData)
 	if err != nil{
 		return ResponseChangeUser{}, err
+	}
+
+	permission, _ := check_user_permission.CheckPermissionsUser(params)
+	if permission{
+		return ResponseChangeUser{}, fmt.Errorf("permission denied")
 	}
 
 	userName, userNameOk := params.Json["userName"].(string) 

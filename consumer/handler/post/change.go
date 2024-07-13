@@ -9,6 +9,7 @@ import (
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
 	training_function "myInternal/consumer/handler/training"
+	check_user_permission "myInternal/consumer/helper"
 	helpers "myInternal/consumer/helper"
 	"net/http"
 	"strings"
@@ -102,8 +103,13 @@ func Change(params params_data.Params)(ResponseChange, error){
 	if err != nil{
 		return ResponseChange{}, err
 	}
-
 	usersData = users
+
+	permission, _ := check_user_permission.CheckPermissionsUser(params)
+	if permission{
+		return ResponseChange{}, fmt.Errorf("permission denied")
+	}
+
 	id := params.Param
 
 	day, dayOk := params.Json["day"].(float64) 

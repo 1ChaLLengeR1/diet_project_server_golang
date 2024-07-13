@@ -8,6 +8,7 @@ import (
 	file_data "myInternal/consumer/data/file"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
+	check_user_permission "myInternal/consumer/helper"
 	random "myInternal/consumer/helper"
 	"net/http"
 	"os"
@@ -54,6 +55,7 @@ func HandlerFileCollection(c *gin.Context){
 
 func HandlerZipDownolad(c *gin.Context){
 	params := params_data.Params{
+		Header: c.GetHeader("UserData"),
         Param: c.Param("projectId"),
     }
 
@@ -140,6 +142,11 @@ func CreateZip(params params_data.Params)(string, error){
 		return "", err
 	}
 	defer db.Close()
+
+	permission, _ := check_user_permission.CheckPermissionsUser(params)
+	if permission{
+		return "" , fmt.Errorf("permission denied")
+	}
 
 	query := `SELECT id FROM post WHERE "projectId" = $1`
 	rows, err := db.Query(query, &projectId)

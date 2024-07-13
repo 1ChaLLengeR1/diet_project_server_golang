@@ -1,10 +1,12 @@
 package file
 
 import (
+	"fmt"
 	params_data "myInternal/consumer/data"
 	file_data "myInternal/consumer/data/file"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
+	check_user_permission "myInternal/consumer/helper"
 	"net/http"
 	"os"
 
@@ -55,6 +57,11 @@ func DeleteFile(params params_data.Params)(ResponseFileDelete, error){
 	_, _,  err = auth.CheckUser(userData)
 	if err != nil{
 		return ResponseFileDelete{}, err
+	}
+
+	permission, _ := check_user_permission.CheckPermissionsUser(params)
+	if permission{
+		return ResponseFileDelete{}, fmt.Errorf("permission denied")
 	}
 
 	id := params.Param

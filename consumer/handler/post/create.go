@@ -1,6 +1,7 @@
 package post
 
 import (
+	"fmt"
 	params_data "myInternal/consumer/data"
 	post_data "myInternal/consumer/data/post"
 	training_data "myInternal/consumer/data/training"
@@ -8,6 +9,7 @@ import (
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
 	training_function "myInternal/consumer/handler/training"
+	check_user_permission "myInternal/consumer/helper"
 	helpers "myInternal/consumer/helper"
 	"net/http"
 	"time"
@@ -94,8 +96,12 @@ func Create(params params_data.Params) (ResponseCreate, error){
 	if err != nil{
 		return ResponseCreate{}, err
 	}
-
 	usersData = users
+
+	permission, _ := check_user_permission.CheckPermissionsUser(params)
+	if permission{
+		return ResponseCreate{}, fmt.Errorf("permission denied")
+	}
 
 	day := params.Json["day"]
 	projectId := params.Param

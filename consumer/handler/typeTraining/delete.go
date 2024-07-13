@@ -1,11 +1,13 @@
 package typetraining
 
 import (
+	"fmt"
 	params_data "myInternal/consumer/data"
 	trainingType_data "myInternal/consumer/data/typeTraining"
 	user_data "myInternal/consumer/data/user"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
+	check_user_permission "myInternal/consumer/helper"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -62,8 +64,12 @@ func DeleteTypeTraining(params params_data.Params)(ResponseDeleteTypeTraning, er
 	if err != nil{
 		return ResponseDeleteTypeTraning{}, err
 	}
-
 	usersData = users
+
+	permission, _ := check_user_permission.CheckPermissionsUser(params)
+	if permission{
+		return ResponseDeleteTypeTraning{}, fmt.Errorf("permission denied")
+	}
 
 	query := `DELETE FROM type_training WHERE "userId" = $1 AND "id" = $2 RETURNING "id", "userId", "name", "createdUp";`
 	rows, err := db.Query(query, usersData[0].Id, typeTrainingId)

@@ -1,6 +1,7 @@
 package post
 
 import (
+	"fmt"
 	params_data "myInternal/consumer/data"
 	delete_data "myInternal/consumer/data/post"
 	data_training "myInternal/consumer/data/training"
@@ -8,6 +9,7 @@ import (
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
 	function_training "myInternal/consumer/handler/training"
+	check_user_permission "myInternal/consumer/helper"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -78,8 +80,12 @@ func Delete(params params_data.Params)(ResponseDelete, error){
 	if err != nil{
 		return ResponseDelete{}, err
 	}
-
 	usersData = users
+
+	permission, _ := check_user_permission.CheckPermissionsUser(params)
+	if permission{
+		return ResponseDelete{}, fmt.Errorf("permission denied")
+	}
 
 	id := params.Param
 

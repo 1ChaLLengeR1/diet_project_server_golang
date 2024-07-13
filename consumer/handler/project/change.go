@@ -7,6 +7,7 @@ import (
 	user_data "myInternal/consumer/data/user"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
+	check_user_permission "myInternal/consumer/helper"
 	helpers "myInternal/consumer/helper"
 	"net/http"
 	"strings"
@@ -77,8 +78,13 @@ func ChangeProject(params params_data.Params)(ResponseChnageProject, error){
 	if err != nil{
 		return ResponseChnageProject{}, err
 	}
-
 	usersData = users
+
+	permission, _ := check_user_permission.CheckPermissionsUser(params)
+	if permission{
+		return ResponseChnageProject{}, fmt.Errorf("permission denied")
+	}
+
 	id := params.Param
 
 	title, titleOk := params.Json["title"].(string)
@@ -151,5 +157,4 @@ func ChangeProject(params params_data.Params)(ResponseChnageProject, error){
 		Status: http.StatusOK,
 		Error: "",
 	}, nil
-
 }

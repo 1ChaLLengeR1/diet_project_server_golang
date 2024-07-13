@@ -6,6 +6,7 @@ import (
 	training_data "myInternal/consumer/data/training"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
+	check_user_permission "myInternal/consumer/helper"
 	helpers "myInternal/consumer/helper"
 	"net/http"
 	"strings"
@@ -71,6 +72,11 @@ func DeleteTraining(params params_data.Params)(ResponseDeleteTraining, error){
 	_, _,  err = auth.CheckUser(userData)
 	if err != nil{
 		return ResponseDeleteTraining{}, err
+	}
+
+	permission, _ := check_user_permission.CheckPermissionsUser(params)
+	if permission{
+		return ResponseDeleteTraining{}, fmt.Errorf("permission denied")
 	}
 
 	removeIds, _ := params.Json["removeIds"].([]interface{})
