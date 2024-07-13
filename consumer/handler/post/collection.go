@@ -60,7 +60,7 @@ func HandlerCollectionPublic(c *gin.Context){
 	var searchPost collection_data.SearchPost
 	c.BindJSON(&searchPost)
 
-	collection, err := CollectionPublic(searchPost.Id, searchPost.ProjectId, searchPost.IdLanguage, searchPost.Page)
+	collection, err := CollectionPublic(searchPost.UserId, searchPost.ProjectId, searchPost.IdLanguage, searchPost.Page)
 	if err != nil{
 		responseCollectionPost(c, nil, nil, http.StatusBadRequest, err)
 		return
@@ -147,8 +147,14 @@ func CollectionPublic(userId string, projectId string, appLanguage string, offse
     }
 
 	pagination := helpers.GetPaginationData(db, "post", userId,  page, perPage)
-
-	query := `SELECT * FROM post WHERE "projectId" = $1 ORDER BY "day" DESC LIMIT $2 OFFSET $3;`
+	query := `
+		SELECT * FROM (
+		SELECT * FROM post 
+		WHERE "projectId" = $1 
+		ORDER BY "day" ASC
+		LIMIT $2 OFFSET $3
+	) subquery
+	ORDER BY "day" DESC;`
     rows, err := db.Query(query, projectId, perPage, pagination.Offset)
 	if err != nil {
 		return ResponseCollection{}, err

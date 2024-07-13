@@ -12,6 +12,7 @@ import (
 	user_handler "myInternal/consumer/handler/user"
 	"myInternal/consumer/middleware"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -29,7 +30,7 @@ func loadRouters() *gin.Engine {
 	})
 
 	router.Use(cors.New(cors.Config{
-        AllowOrigins:     []string{"http://localhost:3000"}, 
+        AllowOrigins:     []string{os.Getenv("FRONT_URL")}, 
         AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH"}, 
         AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "UserData", "AppLanguage"}, 
         ExposeHeaders:    []string{"Content-Length"},

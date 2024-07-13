@@ -11,9 +11,9 @@ type Collection struct {
 	UpdateUp  string  `json:"updateUp"`
 }
 
-// id is userId
 type SearchPost struct {
 	Id         string `json:"id"`
+	UserId     string `json:"userId"`
 	ProjectId  string `json:"projectId"`
 	IdLanguage string `json:"idLanguage"`
 	Page       string `json:"page"`
