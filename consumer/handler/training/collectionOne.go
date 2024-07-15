@@ -21,6 +21,7 @@ func CollectionOneTraining(params params_data.Params)(ResponseCollectionOneTrain
 	if err != nil{
 		return ResponseCollectionOneTraining{}, err
 	}
+	defer db.Close()
 
 	query := `SELECT * FROM training WHERE "postId" = $1`
 	rows, err := db.Query(query, postId)

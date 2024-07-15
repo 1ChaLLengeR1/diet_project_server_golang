@@ -11,7 +11,7 @@ type Create struct {
 }
 
 type CollectionTraining struct {
-	TrainingCollection []OneTraining `json:"trainingCollection"`
+	CollectionTraining []OneTraining `json:"collectionTraining"`
 }
 
 type OneTraining struct {

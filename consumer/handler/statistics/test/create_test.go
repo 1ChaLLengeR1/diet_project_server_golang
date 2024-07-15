@@ -3,7 +3,6 @@ package test
 import (
 	"encoding/json"
 	"fmt"
-	common_test "myInternal/consumer/common"
 	params_data "myInternal/consumer/data"
 	common_post "myInternal/consumer/handler/post/test"
 	common_project "myInternal/consumer/handler/project/test"
@@ -20,7 +19,7 @@ type Training struct {
 }
 
 type TrainingCollection struct {
-	TrainingCollection []Training `json:"trainingCollection"`
+	TrainingCollection []Training `json:"collectionTraining"`
 }
 
 func createDumpStatistics() (string, error) {
@@ -46,17 +45,17 @@ func createDumpStatistics() (string, error) {
 
 	trainingCollections := [][]Training{
 		{
-			{Type: "bike", Time: "1:56:56", Kcal: 1341},
+			{Type: "bike", Time: "01:56:56", Kcal: 1341},
 		},
 		{
 			{Type: "bike", Time: "2:11:04", Kcal: 1424},
 		},
 		{},
 		{
-			{Type: "bike", Time: "1:41:54", Kcal: 1093},
+			{Type: "bike", Time: "01:41:54", Kcal: 1093},
 		},
 		{
-			{Type: "bike", Time: "1:56:56", Kcal: 1341},
+			{Type: "bike", Time: "01:56:56", Kcal: 1341},
 		},
 		{},
 		{
@@ -101,7 +100,6 @@ func TestCreateStatistics(t *testing.T) {
 	}
 
 	params := params_data.Params{
-		Header: common_test.UserTest,
 		Param: projectId,
 	}
 

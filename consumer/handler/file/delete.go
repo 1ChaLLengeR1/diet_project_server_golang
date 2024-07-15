@@ -1,10 +1,12 @@
 package file
 
 import (
+	"fmt"
 	params_data "myInternal/consumer/data"
 	file_data "myInternal/consumer/data/file"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
+	check_user_permission "myInternal/consumer/helper"
 	"net/http"
 	"os"
 
@@ -50,10 +52,16 @@ func DeleteFile(params params_data.Params)(ResponseFileDelete, error){
 	if err != nil{
 		return ResponseFileDelete{}, err
 	}
+	defer db.Close()
 
 	_, _,  err = auth.CheckUser(userData)
 	if err != nil{
 		return ResponseFileDelete{}, err
+	}
+
+	permission, _ := check_user_permission.CheckPermissionsUser(params)
+	if permission{
+		return ResponseFileDelete{}, fmt.Errorf("permission denied")
 	}
 
 	id := params.Param
@@ -65,8 +73,8 @@ func DeleteFile(params params_data.Params)(ResponseFileDelete, error){
 	}
 	defer rows.Close()
 
+	var file file_data.Delete
 	for rows.Next() {
-		var file file_data.Delete
 		if err := rows.Scan(&file.Id, &file.ProjectId, &file.Name, &file.Folder, &file.FolderPath,  &file.Path, &file.Url, &file.CreatedUp, &file.UpdateUp); err != nil{
 			return ResponseFileDelete{}, err
 		}
@@ -79,10 +87,25 @@ func DeleteFile(params params_data.Params)(ResponseFileDelete, error){
 		filesData = append(filesData, file)
 	}
 
+	dir := file.FolderPath
+	if _, err := os.Stat(dir); !os.IsNotExist(err) {
+        files, err := os.ReadDir(dir)
+        if err != nil {
+            return ResponseFileDelete{}, err
+        }
+
+		if len(files) == 0 {
+			if err := os.Remove(dir); err != nil {
+                return ResponseFileDelete{}, err
+            }
+        }
+
+    }
+
+
 	return ResponseFileDelete{
 		Collection: filesData,
 		Status: http.StatusOK,
 		Error: "",
 	}, nil
-
 }

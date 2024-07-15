@@ -12,7 +12,10 @@ import (
 	user_handler "myInternal/consumer/handler/user"
 	"myInternal/consumer/middleware"
 	"net/http"
+	"os"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,6 +29,15 @@ func loadRouters() *gin.Engine {
 		c.String(http.StatusOK, "Start routers Gin")
 	})
 
+	router.Use(cors.New(cors.Config{
+        AllowOrigins:     []string{os.Getenv("FRONT_URL"), "https://projektdieta.server.arturscibor.pl/", "http://localhost:3000/", "http://localhost:3000"}, 
+        AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH"}, 
+        AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "UserData", "AppLanguage"}, 
+        ExposeHeaders:    []string{"Content-Length"},
+        AllowCredentials: true,
+        MaxAge:           12 * time.Hour, 
+    }))
+
 	// project routers
 	projectGroup := router.Group("/api/project")
 	{
@@ -34,14 +46,18 @@ func loadRouters() *gin.Engine {
 		projectGroup.PATCH("/change/:projectId", middleware.EnsureValidToken(), project_handler.HandlerChangeProject)
 		projectGroup.GET("/collection/:page", project_handler.HandlerCollectionProject)
 		projectGroup.GET("/collectionOne/:projectId", project_handler.HandlerCollectionOneProject)
+		projectGroup.GET("/collectionAll", project_handler.HandlerCollectionAll)
+		projectGroup.POST("/collectionPublic", project_handler.HandlerCollectionPublicProject)
 	}
 
 	//post routers
 	postGroup := router.Group("/api/post")
 	{
 		postGroup.POST("/create/:projectId", middleware.EnsureValidToken(), post_handler.CreateHandler)
-		postGroup.GET("/collection/:page", post_handler.HandlerCollection)
+		postGroup.POST("/collection/:page", post_handler.HandlerCollection)
 		postGroup.GET("/one/:id", post_handler.HandlerCollectionOne)
+		postGroup.POST("/collectionOnePublic", post_handler.HandlerCollectionOnePublic)
+		postGroup.POST("/collectionPublic", post_handler.HandlerCollectionPublic)
 		postGroup.PATCH("/change/:id", middleware.EnsureValidToken(), post_handler.HandlerChange)
 		postGroup.DELETE("/delete/:id", middleware.EnsureValidToken(), post_handler.HandlerDelete)
 	}
@@ -51,8 +67,10 @@ func loadRouters() *gin.Engine {
 	{
 		fileGroup.POST("/create", middleware.EnsureValidToken(), file_handler.HandlerCreateFile)
 		fileGroup.DELETE("/delete/:deleteId", middleware.EnsureValidToken(), file_handler.HandlerFileDelete)
-		fileGroup.GET("/collection/:postId", file_handler.HandlerFileCollection)
+		fileGroup.GET("/collection/:projectId", file_handler.HandlerFileCollection)
 		fileGroup.DELETE("/deleteAll", middleware.EnsureValidToken(), file_handler.HandlerFileAllDelete)
+		fileGroup.POST("/collectionMultiple", file_handler.HandlerFileCollectionMultiple)
+		fileGroup.GET("/downolad/zip/:projectId", middleware.EnsureValidToken(), file_handler.HandlerZipDownolad)
 	}
 
 	//dictionary routers
@@ -90,9 +108,10 @@ func loadRouters() *gin.Engine {
 	}
 
 	//user routers
-	userGroup := router.Group("/api/user", middleware.EnsureValidToken())
+	userGroup := router.Group("/api/user")
 	{
-		userGroup.PATCH("/change", user_handler.HandlerChangeUser)
+		userGroup.PATCH("/change", middleware.EnsureValidToken(), user_handler.HandlerChangeUser)
+		userGroup.GET("/collection", user_handler.HandlerCollectionUser)
 	}
 
 	return router

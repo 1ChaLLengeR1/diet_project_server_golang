@@ -7,6 +7,7 @@ import (
 	user_data "myInternal/consumer/data/user"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
+	check_user_permission "myInternal/consumer/helper"
 	helpers "myInternal/consumer/helper"
 	"net/http"
 	"time"
@@ -67,13 +68,18 @@ func CreateTypeTraining(params params_data.Params)(ResponseCreateTypeTraning, er
 	if err != nil{
 		return ResponseCreateTypeTraning{}, err
 	}
+	defer db.Close()
 
 	_, users,  err := auth.CheckUser(userData)
 	if err != nil{
 		return ResponseCreateTypeTraning{}, err
 	}
-
 	usersData = users
+
+	permission, _ := check_user_permission.CheckPermissionsUser(params)
+	if permission{
+		return ResponseCreateTypeTraning{}, fmt.Errorf("permission denied")
+	}
 
 	name := params.Json["name"].(string) 
 	if name == "" {

@@ -8,6 +8,7 @@ import (
 	file_data "myInternal/consumer/data/file"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
+	check_user_permission "myInternal/consumer/helper"
 	random "myInternal/consumer/helper"
 	"net/http"
 	"os"
@@ -85,20 +86,27 @@ func HandlerCreateFile(c *gin.Context) {
 func CreateFile(params params_data.Params)(ResponseFileCreate, error){
 	userData := params.Header
     var filesData []file_data.Create
+    filesFormData := params.FormData
 
 	db, err := database.ConnectToDataBase()
 	if err != nil{
 		return ResponseFileCreate{}, err
 	}
+    defer db.Close()
 
 	_, _,  err = auth.CheckUser(userData)
 	if err != nil{
 		return ResponseFileCreate{}, err
 	}
 
+    permission, _ := check_user_permission.CheckPermissionsUser(params)
+	if permission{
+		return ResponseFileCreate{}, fmt.Errorf("permission denied")
+	}
+
     index := 0
 
-	for _, files := range params.FormData {
+	for _, files := range filesFormData {
         for _, file := range files {
             src, err := file.Open()
             if err != nil {
@@ -114,6 +122,7 @@ func CreateFile(params params_data.Params)(ResponseFileCreate, error){
             }
             
 			folder := removePolishCharsAndCleanWhiteSpace(params.FormDataParams["folder"].(string)) 
+
 			folderPath := filepath.Join("consumer", "file", folder)
 			if _, err := os.Stat(folderPath); os.IsNotExist(err) {
 				if err := os.MkdirAll(folderPath, 0755); err != nil {

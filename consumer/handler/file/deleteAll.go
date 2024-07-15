@@ -6,6 +6,7 @@ import (
 	file_data "myInternal/consumer/data/file"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
+	check_user_permission "myInternal/consumer/helper"
 	helpers "myInternal/consumer/helper"
 	"net/http"
 	"os"
@@ -65,10 +66,16 @@ func DeleteFileAll(params params_data.Params)(ResponseFileAllDelete, error){
 	if err != nil{
 		return ResponseFileAllDelete{}, err
 	}
+	defer db.Close()
 
 	_, _,  err = auth.CheckUser(userData)
 	if err != nil{
 		return ResponseFileAllDelete{}, err
+	}
+
+	permission, _ := check_user_permission.CheckPermissionsUser(params)
+	if permission{
+		return ResponseFileAllDelete{}, fmt.Errorf("permission denied")
 	}
 	
 	ids, _ := params.Json["ids"].([]interface{})
@@ -108,8 +115,6 @@ func DeleteFileAll(params params_data.Params)(ResponseFileAllDelete, error){
 	}, nil
 
 }
-
-
 
 func removeFolders(paths []string) error {
     for _, path := range paths {

@@ -33,5 +33,4 @@ func CreatePost(body string, id string)(string, error){
 	}
 
 	return createPostF.Collection[0].Id, nil
-
 }

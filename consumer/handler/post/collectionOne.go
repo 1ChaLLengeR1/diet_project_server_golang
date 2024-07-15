@@ -1,7 +1,6 @@
 package post
 
 import (
-	"database/sql"
 	params_data "myInternal/consumer/data"
 	post_data "myInternal/consumer/data/post"
 	training_data "myInternal/consumer/data/training"
@@ -21,22 +20,29 @@ type ResponseCollectionOne struct{
 	Error      string 						`json:"error"`
 }
 
+func responseCollectionOne(c *gin.Context, col []post_data.Collection, colTra []training_data.Collection, status int, err error){
+	response := ResponseCollectionOne{
+		Collection:         col,
+		CollectionTraining: colTra,
+		Status:             status,
+	}
+	
+	if err != nil {
+		response.Error = err.Error()
+	}
+	c.JSON(status, response)
+}
+
 func HandlerCollectionOne(c *gin.Context){
 
 	params := params_data.Params{
 		Header: c.GetHeader("UserData"),
-		Query: c.Query("private"),
 		Param: c.Param("id"),
 	}
 
 	collectionOne, err := CollectionOne(params)
 	if err != nil{
-		c.JSON(http.StatusBadRequest, ResponseCollectionOne{
-			Collection: nil,
-			CollectionTraining: nil,
-			Status: http.StatusBadRequest,
-			Error: err.Error(),
-		})
+		responseCollectionOne(c, nil, nil, http.StatusBadRequest, err)
 		return
 	}
 
@@ -46,60 +52,92 @@ func HandlerCollectionOne(c *gin.Context){
 
 	collectionOneTraining, err := training_function.CollectionOneTraining(params)
 	if err != nil{
-		c.JSON(http.StatusBadRequest, ResponseCollectionOne{
-			Collection: nil,
-			CollectionTraining: nil,
-			Status: http.StatusBadRequest,
-			Error: err.Error(),
-		})
+		responseCollectionOne(c, nil, nil, http.StatusBadRequest, err)
 		return
 	}
 
+	responseCollectionOne(c, collectionOne.Collection, collectionOneTraining.Collection, collectionOne.Status, nil)
+}
 
-	c.JSON(http.StatusOK, ResponseCollectionOne{
-		Collection: collectionOne.Collection,
-		CollectionTraining: collectionOneTraining.Collection,
-		Status: collectionOne.Status,
-		Error: collectionOne.Error,
-	})
+func HandlerCollectionOnePublic(c *gin.Context){
+	var searchPost post_data.SearchPost
+	c.BindJSON(&searchPost)
+
+	params := params_data.Params{
+		Param: searchPost.Id,
+	}
+
+	collectionOnePublic, err := CollectionOnePublic(params)
+	if err != nil{
+		responseCollectionOne(c, nil, nil, http.StatusBadRequest, err)
+		return
+	}
+
+	collectionOneTraining, err := training_function.CollectionOneTraining(params)
+	if err != nil{
+		responseCollectionOne(c, nil, nil, http.StatusBadRequest, err)
+		return
+	}
+
+	responseCollectionOne(c, collectionOnePublic.Collection, collectionOneTraining.Collection, collectionOnePublic.Status, nil)
 }
 
 func CollectionOne(params params_data.Params)(ResponseCollectionOne, error){
 	userData := params.Header
-	queryParam := params.Query
-
+	
 	var usersData []user_data.User
 	var collectionOneData []post_data.Collection
-	var query string
-
 
 	db, err := database.ConnectToDataBase()
 	if err != nil{
 		return ResponseCollectionOne{}, err
 	}
+	defer db.Close()
 
-	if queryParam == "true" {
-        _, users, err := auth.CheckUser(userData)
-        if err != nil {
-            return ResponseCollectionOne{}, err
-        }
-        usersData = users
-
-        query = `SELECT * FROM post WHERE "id" = $1 AND "userId" = $2;`
-    } else {
-        query = `SELECT * FROM post WHERE "id" = $1`
+	_, users, err := auth.CheckUser(userData)
+    if err != nil {
+        return ResponseCollectionOne{}, err
     }
-
+    usersData = users
+	
 	id := params.Param
 
+	query := `SELECT * FROM post WHERE "id" = $1 AND "userId" = $2;`
+	rows, err := db.Query(query, &id, &usersData[0].Id)
+	if err != nil {
+		return ResponseCollectionOne{}, err
+	}
+	defer rows.Close()
 
-	var rows *sql.Rows
-    if queryParam == "true" {
-        rows, err = db.Query(query, &id, &usersData[0].Id)
-    } else {
-        rows, err = db.Query(query, &id)
-    }
+	for rows.Next() {
+		var collection post_data.Collection
+		if err := rows.Scan(&collection.Id, &collection.UserId, &collection.ProjectId, &collection.Day, &collection.Weight, &collection.Kcal, &collection.CreatedUp, &collection.UpdateUp); err != nil {
+			return ResponseCollectionOne{}, err
+		}
+		collectionOneData = append(collectionOneData, collection)
+	}
 
+	return ResponseCollectionOne{
+		Collection: collectionOneData,
+		CollectionTraining: nil,
+		Status: http.StatusOK,
+		Error: "",
+	}, nil
+}
+
+func CollectionOnePublic(params params_data.Params)(ResponseCollectionOne, error){
+
+	id := params.Param
+	var collectionOneData []post_data.Collection
+
+	db, err := database.ConnectToDataBase()
+	if err != nil{
+		return ResponseCollectionOne{}, err
+	}
+	defer db.Close()
+
+	query := `SELECT * FROM post WHERE "id" = $1;`
+	rows, err := db.Query(query, &id)
 	if err != nil {
 		return ResponseCollectionOne{}, err
 	}

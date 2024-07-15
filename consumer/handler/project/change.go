@@ -7,9 +7,11 @@ import (
 	user_data "myInternal/consumer/data/user"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
+	check_user_permission "myInternal/consumer/helper"
 	helpers "myInternal/consumer/helper"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -70,18 +72,26 @@ func ChangeProject(params params_data.Params)(ResponseChnageProject, error){
 	if err != nil{
 		return ResponseChnageProject{}, err
 	}
+	defer db.Close()
 
 	_, users,  err := auth.CheckUser(userData)
 	if err != nil{
 		return ResponseChnageProject{}, err
 	}
-
 	usersData = users
+
+	permission, _ := check_user_permission.CheckPermissionsUser(params)
+	if permission{
+		return ResponseChnageProject{}, fmt.Errorf("permission denied")
+	}
+
 	id := params.Param
 
 	title, titleOk := params.Json["title"].(string)
 	description, descriptionOk := params.Json["description"].(string)
-	updateUp, _ := params.Json["updateUp"].(string)
+	now := time.Now()
+    formattedDate := now.Format("2006-01-02 15:04:05")
+	updateUp := formattedDate
 	
 	var updateFields []string
 	if titleOk {
@@ -147,5 +157,4 @@ func ChangeProject(params params_data.Params)(ResponseChnageProject, error){
 		Status: http.StatusOK,
 		Error: "",
 	}, nil
-
 }

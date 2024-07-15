@@ -12,7 +12,7 @@ import (
 	"testing"
 )
 
-func TestChangeTraning(t *testing.T){
+func TestChangeTraining(t *testing.T){
 	dataBody := `{
 		"day":1,
 		"weight":88,
@@ -39,9 +39,9 @@ func TestChangeTraning(t *testing.T){
 		t.Fatalf("error create post function: %v", err)
 	}
 
-	trainingCollection := `
+	collectionTraining := `
 	{
-		"trainingCollection": [
+		"collectionTraining": [
 			{
 				"type":"gym",
 				"time":"2:05:32",
@@ -62,7 +62,7 @@ func TestChangeTraning(t *testing.T){
 	`
 	
 	var trainingCollectionMap map[string]interface{}
-	err = helpers.UnmarshalJSONToType(trainingCollection, &trainingCollectionMap)
+	err = helpers.UnmarshalJSONToType(collectionTraining, &trainingCollectionMap)
 	if err != nil {
 		t.Fatalf("error unmarshalling trainingCollection: %v", err)
 	}
@@ -84,7 +84,7 @@ func TestChangeTraning(t *testing.T){
 
 	trainingChange := fmt.Sprintf(`
 	{
-		"trainingCollection": [
+		"collectionTraining": [
 			{
 				"id":"%s",
 				"type":"gym",

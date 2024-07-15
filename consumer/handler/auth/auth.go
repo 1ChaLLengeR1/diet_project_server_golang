@@ -48,20 +48,20 @@ func CheckUser(userData string)(bool, []user_data.User, error){
 	if err != nil{
 		return false, nil, err
 	}
+	defer db.Close()
 
 	err = json.Unmarshal([]byte(userData), &data)
 	if err != nil {
 		return false, nil, fmt.Errorf("error josn userData: %v", err)
 	}
 
-	query := `SELECT * FROM users WHERE "sub" = $1;`
-	row := db.QueryRow(query, data.Sub)
+	query := `SELECT * FROM users WHERE "email" = $1;`
+	row := db.QueryRow(query, data.Name)
 	err = row.Scan(&user.Id, &user.UserName, &user.LastName, &user.NickName, &user.Email, &user.Role, &user.Sub)
 	if err != nil {
 		return true, nil, fmt.Errorf("error scanning row users: %v", err)
 	}
 	users = append(users, user)
-	defer db.Close()
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -80,7 +80,8 @@ func createUser(userData string) ([]user_data.User, error){
 	if err != nil{
 		return nil, err
 	}
-
+	defer db.Close()
+	
 	var data user_data.UserData
 	err = json.Unmarshal([]byte(userData), &data)
 	if err != nil {
@@ -103,7 +104,7 @@ func createUser(userData string) ([]user_data.User, error){
 		}
 		users = append(users, user)
 	}
-
+	
 	return users, nil
 }
 

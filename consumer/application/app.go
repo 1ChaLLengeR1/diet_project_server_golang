@@ -21,7 +21,7 @@ func New() *App{
 func (a *App) Start(ctx context.Context) error{
 	
 	server := &http.Server{
-		Addr: ":3000",
+		Addr: ":3001",
 		Handler: a.router,
 	}
 	err := server.ListenAndServe()

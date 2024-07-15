@@ -7,21 +7,20 @@ import (
 )
 
 type PaginationCollectionPost struct {
-	NextPage     int
-	PreviousPage int
-	CurrentPage  int
-	TotalPages   int
-	TwoAfter     int
-	TwoBelow     int
-	Offset 		int
+	NextPage     int `json:"nextPage"`
+	PreviousPage int `json:"previousPage"`
+	CurrentPage  int `json:"currentPage"`
+	TotalPages   int `json:"totalPages"`
+	TwoAfter     int `json:"twoAfter"`
+	TwoBelow     int `json:"twoBelow"`
+	Offset 		 int `json:"offset"`
 }
 
-func GetPaginationData(db *sql.DB, tableName string, page int, perPage int ) PaginationCollectionPost {
-
-
+func GetPaginationData(db *sql.DB, tableName string, userId string, page int, perPage int ) PaginationCollectionPost {
+	
 	var totalRows int
 
-	queryCount := fmt.Sprintf("SELECT COUNT(*) FROM %s;", tableName)
+	queryCount := fmt.Sprintf(`SELECT COUNT(*) FROM %s WHERE "userId" = '%s'`, tableName, userId)
 	err := db.QueryRow(queryCount).Scan(&totalRows)
 	if err != nil {
 		return PaginationCollectionPost{}

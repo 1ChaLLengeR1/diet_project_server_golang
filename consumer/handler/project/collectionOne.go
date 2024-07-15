@@ -57,6 +57,7 @@ func CollectionOneProject(params params_data.Params)(ResponseCollectionOneProjec
 	if err != nil{
 		return ResponseCollectionOneProject{}, err
 	}
+	defer db.Close()
 
 	if queryParam == "true" {
         _, users, err := auth.CheckUser(userData)

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -29,6 +30,10 @@ func ConnectToDataBase() (*sql.DB, error){
 		db.Close()
 		return nil, fmt.Errorf("not pinnging the database: %v", err)
 	}
+
+	db.SetMaxOpenConns(25)
+	db.SetMaxIdleConns(25)
+	db.SetConnMaxLifetime(5 * time.Minute)
 
 	fmt.Println("Successfully connected to the database!")
 	return db, nil

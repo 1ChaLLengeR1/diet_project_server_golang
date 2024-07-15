@@ -24,8 +24,9 @@ func ChangeTraining(params params_data.Params)(ResponseChangeTraining, error) {
 	if err != nil{
 		return ResponseChangeTraining{}, err
 	}
+	defer db.Close()
 
-	trainingCollection, _ := params.Json["trainingCollection"].([]interface{})
+	trainingCollection, _ := params.Json["collectionTrainingChange"].([]interface{})
 	now := time.Now()
     formattedDate := now.Format("2006-01-02 15:04:05")
 
@@ -81,5 +82,4 @@ func ChangeTraining(params params_data.Params)(ResponseChangeTraining, error) {
 		Status: http.StatusOK,
 		Error: "",
 	}, nil
-
 }

@@ -9,3 +9,9 @@ type Collection struct {
 	CreatedUp   *string `json:"createdUp"`
 	UpdateUp    *string `json:"updateUp"`
 }
+
+type SearchProject struct {
+	Id         string `json:"id"`
+	IdLanguage string `json:"idLanguage"`
+	Page       string `json:"page"`
+}

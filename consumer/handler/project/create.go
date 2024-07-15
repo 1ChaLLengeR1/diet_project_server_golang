@@ -7,6 +7,7 @@ import (
 	user_data "myInternal/consumer/data/user"
 	database "myInternal/consumer/database"
 	"myInternal/consumer/handler/auth"
+	check_user_permission "myInternal/consumer/helper"
 	helpers "myInternal/consumer/helper"
 	"net/http"
 	"time"
@@ -68,20 +69,24 @@ func CreateProject(params params_data.Params)(ResponseCreateProject, error) {
 
 	if appLanguage == ""{
 		return ResponseCreateProject{}, fmt.Errorf("appLanguage is nil or empty: %v", appLanguage)
-
 	}
 
 	db, err := database.ConnectToDataBase()
 	if err != nil{
 		return ResponseCreateProject{}, err
 	}
+	defer db.Close()
 
 	_, users,  err := auth.CheckUser(userData)
 	if err != nil{
 		return ResponseCreateProject{}, err
 	}
-
 	usersData = users
+
+	permission, _ := check_user_permission.CheckPermissionsUser(params)
+	if permission{
+		return ResponseCreateProject{}, fmt.Errorf("permission denied")
+	}
 
 	title := params.Json["title"]
 	description := params.Json["description"]
