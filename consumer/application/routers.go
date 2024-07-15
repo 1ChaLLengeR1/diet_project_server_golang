@@ -30,7 +30,7 @@ func loadRouters() *gin.Engine {
 	})
 
 	router.Use(cors.New(cors.Config{
-        AllowOrigins:     []string{os.Getenv("FRONT_URL"), "http://projektdieta.server.arturscibor.pl/"}, 
+        AllowOrigins:     []string{os.Getenv("FRONT_URL"), "https://projektdieta.server.arturscibor.pl/", "http://localhost:3000/", "http://localhost:3000"}, 
         AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH"}, 
         AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "UserData", "AppLanguage"}, 
         ExposeHeaders:    []string{"Content-Length"},
