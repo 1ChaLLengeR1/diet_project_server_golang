@@ -1,6 +1,7 @@
 package post
 
 import (
+	"fmt"
 	params_data "myInternal/consumer/data"
 	collection_data "myInternal/consumer/data/post"
 	user_data "myInternal/consumer/data/user"
@@ -95,7 +96,7 @@ func Collection(params params_data.Params)(ResponseCollection, error){
         page, _ = strconv.Atoi(pageStr)
     }
 
-	pagination := helpers.GetPaginationData(db, "post", usersData[0].Id, page, perPage)
+	pagination := helpers.GetPaginationData(db, "post", usersData[0].Id, page, perPage, fmt.Sprintf(`"projectId" = '%s'`, projectId))
 
 	query := `
 		SELECT * FROM (
@@ -146,7 +147,7 @@ func CollectionPublic(userId string, projectId string, appLanguage string, offse
         page, _ = strconv.Atoi(pageStr)
     }
 
-	pagination := helpers.GetPaginationData(db, "post", userId,  page, perPage)
+	pagination := helpers.GetPaginationData(db, "post", userId,  page, perPage, fmt.Sprintf(`"projectId" = '%s'`, projectId))
 	query := `
 		SELECT * FROM (
 		SELECT * FROM post 

@@ -16,11 +16,17 @@ type PaginationCollectionPost struct {
 	Offset 		 int `json:"offset"`
 }
 
-func GetPaginationData(db *sql.DB, tableName string, userId string, page int, perPage int ) PaginationCollectionPost {
+func GetPaginationData(db *sql.DB, tableName string, userId string, page int, perPage int, filterBy string ) PaginationCollectionPost {
 	
 	var totalRows int
 
 	queryCount := fmt.Sprintf(`SELECT COUNT(*) FROM %s WHERE "userId" = '%s'`, tableName, userId)
+
+	if filterBy != "" {
+		queryCount += fmt.Sprintf(` AND %s`, filterBy)
+	}
+
+
 	err := db.QueryRow(queryCount).Scan(&totalRows)
 	if err != nil {
 		return PaginationCollectionPost{}

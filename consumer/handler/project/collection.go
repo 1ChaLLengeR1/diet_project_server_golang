@@ -127,7 +127,7 @@ func CollectionProject(params params_data.Params)(ResponseCollectionProject, err
         page, _ = strconv.Atoi(pageStr)
     }
 
-	pagination := helpers.GetPaginationData(db, "project", usersData[0].Id,  page, perPage)
+	pagination := helpers.GetPaginationData(db, "project", usersData[0].Id,  page, perPage, "")
 
 	rows, err := db.Query(query, &usersData[0].Id, perPage, pagination.Offset, appLanguage)
 	if err != nil {
@@ -190,7 +190,7 @@ func CollectionPublicProjects(userId string, appLanguage string, offsetPage stri
         page, _ = strconv.Atoi(pageStr)
     }
 
-	pagination := helpers.GetPaginationData(db, "project", userId,  page, perPage)
+	pagination := helpers.GetPaginationData(db, "project", userId,  page, perPage,"")
 
 	var rows *sql.Rows
 	rows, err = db.Query(query, userId, perPage, pagination.Offset, appLanguage)
